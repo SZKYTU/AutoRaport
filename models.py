@@ -15,7 +15,9 @@ class Protocol(Base):
     date = Column(Date, nullable=False)
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
-    model = Column(String(50), nullable=False)
+    laptop = relationship("Laptop", backref="protocol")
+    charger = Column(Boolean, default=False)
+    comment = Column(String(250))
 
 
 
@@ -24,6 +26,7 @@ class Laptop(Base):
 
     id = Column(Integer, primary_key=True)
     serial_number = Column(String(50), nullable=False)
+    ForeignKey('protocols.serial_number'), nullable=False)
     model = Column(String(50), nullable=False)
     status = Column(String(50), nullable=False)
     comment = Column(Text)
