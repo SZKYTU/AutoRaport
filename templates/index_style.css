@@ -1,0 +1,49 @@
+body {
+    background-color: #1b1d1f;
+    color: #f8f8f2;
+    font-family: 'Source Code Pro', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+form {
+    background-color: #282a2e;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+input,
+textarea {
+    background-color: #3b3d41;
+    color: #f8f8f2;
+    border: none;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-family: 'Source Code Pro', monospace;
+}
+
+button[type="submit"] {
+    background-color: #50fa7b;
+    color: #282a2e;
+    font-family: 'Source Code Pro', monospace;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: center;
+}
+
+button[type="submit"]:hover {
+    background-color: #3be8b3;
+}
+
+label {
+    font-family: 'Source Code Pro', monospace;
+    color: #f8f8f2;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: block;
+}
