@@ -1,6 +1,10 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Text
+from sqlalchemy import create_engine, Column, Integer, String, Date, Text,ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql.expression import text
 
+
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -12,10 +16,10 @@ class Protocol(Base):
     __tablename__ = 'protocols'
 
     id = Column(Integer, primary_key=True)
-    date = Column(Date, nullable=False)
+    date = Column(Date, default=text('CURRENT_TIMESTAMP'))
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
-    laptop = relationship("Laptop", backref="protocol")
+    laptops = relationship("Laptop", backref="protocol")
     charger = Column(Boolean, default=False)
     comment = Column(String(250))
 
@@ -26,7 +30,7 @@ class Laptop(Base):
 
     id = Column(Integer, primary_key=True)
     serial_number = Column(String(50), nullable=False)
-    ForeignKey('protocols.serial_number'), nullable=False)
+    protocol_id = Column(Integer, ForeignKey('protocols.id'), nullable=False)
     model = Column(String(50), nullable=False)
     status = Column(String(50), nullable=False)
     comment = Column(Text)
