@@ -1,16 +1,26 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Text,ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Date, Text, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 
-
 import os
+import pyodbc
 from dotenv import load_dotenv
+
 load_dotenv()
 
-engine = create_engine(f'mssql+pyodbc://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_HOST")}/{os.getenv("DB_NAME")}')
+conn = pyodbc.connect(
+    driver='{ODBC Driver 17 for SQL Server}',
+    server=os.getenv('DB_HOST'),
+    database=os.getenv('DB_NAME'),
+    uid=os.getenv('DB_USER'),
+    pwd=os.getenv('DB_PASS')
+)
+
+engine = create_engine('mssql+pyodbc://', creator=lambda: conn)
 
 Base = declarative_base()
+
 
 class Protocol(Base):
     __tablename__ = 'protocols'
@@ -24,7 +34,6 @@ class Protocol(Base):
     comment = Column(String(250))
 
 
-
 class Laptop(Base):
     __tablename__ = 'laptops'
 
@@ -36,6 +45,4 @@ class Laptop(Base):
     comment = Column(Text)
 
 
-Base.metadata.create_all(bind=engine)
-
-
+Base.metadata.create_all(engine)
