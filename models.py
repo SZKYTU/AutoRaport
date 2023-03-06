@@ -33,7 +33,7 @@ class Laptop(Base):
     status = Column(String(50), nullable=False)
 
 
-class Protokol(Base):
+class Protocol(Base):
     __tablename__ = 'protocols'
 
     id = Column(Integer, primary_key=True)
