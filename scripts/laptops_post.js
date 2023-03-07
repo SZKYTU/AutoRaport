@@ -1,31 +1,36 @@
-const form = document.getElementById('add-laptop-form');
-form.addEventListener('submit', event => {
+const form = document.querySelector('form');
+
+form.addEventListener('submit', (event) => {
     event.preventDefault();
+
+    const serialNumber = document.getElementById('serial_number').value;
+    const model = document.getElementById('model').value;
+    const comment = document.getElementById('coment').value;
+    const company = document.getElementById('company').value;
+    const status = document.getElementById('status').value;
+
     const data = {
-        serial_number: form.elements['serial_number'].value,
-        model: form.elements['model'].value,
-        cement: form.elements['cement'].value,
-        company: form.elements['company'].value,
-        status: form.elements['status'].value,
+        serial_number: serialNumber,
+        model: model,
+        comment: comment,
+        company: company,
+        status: status
     };
-    fetch('/laptops', {
+
+    fetch('/laptops/add', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            alert(data.message);
-            form.reset();
+            console.log('Success:', data);
+            alert('Equipment added successfully!');
         })
-        .catch(error => {
-            console.error('There was a problem adding the laptop:', error);
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('Error adding equipment!');
         });
 });

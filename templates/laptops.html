@@ -3,32 +3,46 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Add Laptop</title>
+    <title>Add Equipment</title>
 </head>
 
 <body>
-    <h1>Add Laptop</h1>
-    <form id="add-laptop-form">
-        <label for="serial_number">Serial Number:</label>
-        <input type="text" id="serial_number" name="serial_number"><br>
-
-        <label for="model">Model:</label>
-        <input type="text" id="model" name="model"><br>
-
-        <label for="cement">Cement:</label>
-        <input type="text" id="cement" name="cement"><br>
-
-        <label for="company">Company:</label>
-        <input type="text" id="company" name="company"><br>
-
-        <label for="status">Status:</label>
-        <select id="status" name="status">
-            <option value="in-use">In Use</option>
-            <option value="available">Available</option>
-            <option value="maintenance">Maintenance</option>
-        </select><br>
-
-        <button type="submit">Add Laptop</button>
+    <h1>Add Equipment</h1>
+    <form>
+        <div>
+            <label for="serial_number">Serial Number:</label>
+            <input type="text" id="serial_number" name="serial_number" required>
+        </div>
+        <div>
+            <label for="model">Model:</label>
+            <input type="text" id="model" name="model" required>
+        </div>
+        <div>
+            <label for="comment">Comment:</label>
+            <input type="text" id="coment" name="coment" required>
+        </div>
+        <div>
+            <label for="company">Company:</label>
+            <select id="company" name="company">
+                <option value="Company A">Company A</option>
+                <option value="Company B">Company B</option>
+                <option value="Company C">Company C</option>
+            </select>
+        </div>
+        <div>
+            <label for="status">Status:</label>
+            <select id="status" name="status">
+                <option value="New">New</option>
+                <option value="Used">Used</option>
+                <option value="Damaged">Damaged</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
     </form>
-<script src="../scripts/laptops_post.js"></script></body>
+<script src="{{ url_for('scripts', filename='laptops_post.js') }}"></script>
+
+</body>
+
 </html>
