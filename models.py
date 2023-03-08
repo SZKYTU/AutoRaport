@@ -28,7 +28,7 @@ class Laptop(Base):
     id = Column(Integer, primary_key=True)
     serial_number = Column(String(50), nullable=False)
     model = Column(String(50), nullable=False)
-    cement = Column(String(50))
+    coment = Column(String(50))
     company = Column(String(50), nullable=False)
     status = Column(String(50), nullable=False)
 

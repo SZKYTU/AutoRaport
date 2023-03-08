@@ -18,23 +18,17 @@ def laptops():
 def add_laptop():
   data = request.get_json()
 
-#   serial_number = data['serial_number']
-#   model = data['model']
-#   comment = data['comment']
-#   company = data['company']
-#   status = data['status']
-
   laptop = Laptop(
       serial_number=data['serial_number'],
       model=data['model'],
-      comment=data['coment'],
+      coment=data['coment'],
       company=data['company'],
       status=data['status']
   )
-
   session = Session()
   session.add(laptop)
   session.commit()
+
 
   return jsonify({'success': True, 'message': 'Equipment added successfully!'})
 

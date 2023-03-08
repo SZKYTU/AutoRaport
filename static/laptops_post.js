@@ -5,14 +5,14 @@ form.addEventListener('submit', (event) => {
 
     const serialNumber = document.getElementById('serial_number').value;
     const model = document.getElementById('model').value;
-    const comment = document.getElementById('coment').value;
+    const coment = document.getElementById('coment').value;
     const company = document.getElementById('company').value;
     const status = document.getElementById('status').value;
 
     const data = {
         serial_number: serialNumber,
         model: model,
-        comment: comment,
+        coment: coment,
         company: company,
         status: status
     };
