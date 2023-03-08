@@ -14,6 +14,10 @@ Base = declarative_base()
 def laptops():
     return render_template('laptops.html')
 
+# @app.route('/protocol')
+# def laptops():
+#     return render_template('protocols.html')
+
 @app.route('/laptops/add', methods=['POST'])
 def add_laptop():
   data = request.get_json()
@@ -28,7 +32,6 @@ def add_laptop():
   session = Session()
   session.add(laptop)
   session.commit()
-
 
   return jsonify({'success': True, 'message': 'Equipment added successfully!'})
 
