@@ -47,4 +47,12 @@ class Protocol(Base):
     laptop = relationship("Laptop")
 
 
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    imie = Column(String(50), nullable=False)
+    nazwisko = Column(String(50), nullable=False)
+
+    
 Base.metadata.create_all(engine)

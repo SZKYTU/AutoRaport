@@ -1,23 +1,24 @@
-const form = document.getElementById('protocol-form');
-form.addEventListener('submit', e => {
-    e.preventDefault();
+const form = document.querySelector('#myForm');
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const l_name = document.querySelector('#nazwisko').value;
+    const company = document.querySelector('#firma').value;
+    const laptop = document.querySelector('#laptop').value;
 
-    const first_name = form.first_name.value;
-    const last_name = form.last_name.value;
-    const comment = form.comment.value;
+    const url = `/protocol/users?nazwisko=${l_name}`;
 
-    fetch('/api/protocol', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ first_name, last_name, comment })
-    })
+    fetch(url)
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            alert('Protocol submitted successfully!');
+            const select = document.querySelector('#usersList');
+            select.innerHTML = '';
+            data.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = `${user.imie} ${user.nazwisko}`;
+                select.appendChild(option);
+            });
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('There was an error submitting the protocol. Please try again later.');
-        });
+        .catch(error => console.error(error));
 });

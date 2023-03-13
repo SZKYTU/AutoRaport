@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Formularz</title>
+</head>
+
+<body>
+    <form id="myForm">
+        <label for="nazwisko">Nazwisko:</label>
+        <input type="text" id="nazwisko" name="nazwisko"><br>
+
+        <label for="firma">Firma:</label>
+        <select id="firma" name="firma">
+            <option value="Telforceone">Telforceone</option>
+            <option value="mptech">mptech</option>
+            <option value="teletorum">teletorum</option>
+        </select><br>
+
+        <label for="laptop">Laptop:</label>
+        <input type="text" id="laptop" name="laptop"><br>
+
+        <input type="submit" value="submit">
+    </form>
+    <script src="{{ url_for('static', filename='protocol_post.js') }}"></script>
+</body>
+
+</html>
