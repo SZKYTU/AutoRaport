@@ -1,4 +1,12 @@
 const form = document.querySelector('#myForm');
+const table = $('#usersTable').DataTable({
+    columns: [
+        { title: "ID", data: "id" },
+        { title: "Imię", data: "imie" },
+        { title: "Nazwisko", data: "nazwisko" }
+    ]
+});
+
 form.addEventListener('submit', (event) => {
     event.preventDefault();
     const l_name = document.querySelector('#nazwisko').value;
@@ -11,14 +19,7 @@ form.addEventListener('submit', (event) => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            const select = document.querySelector('#usersList');
-            select.innerHTML = '';
-            data.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.textContent = `${user.imie} ${user.nazwisko}`;
-                select.appendChild(option);
-            });
+            table.clear().rows.add(data).draw();
         })
         .catch(error => console.error(error));
 });
