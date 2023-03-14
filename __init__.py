@@ -39,10 +39,12 @@ def add_laptop():
 
 @app.route('/protocol/users', methods=['GET'])
 def get_users():
-    nazwisko = request.args.get('nazwisko')
-    users = session.query(User).filter_by(nazwisko=nazwisko).all()
-    users_dict = [{'id': user.id, 'imie': user.imie,
-                   'nazwisko': user.nazwisko} for user in users]
+    l_name = request.args.get('nazwisko')
+    print(f"last{l_name}")
+    users = session.query(User).filter_by(l_name=l_name).all()
+    users_dict = [{'id': user.id, 'imie': user.name,
+                   'nazwisko': user.l_name} for user in users]
+    print(users_dict)
     return jsonify(users_dict)
 
 if __name__ == "__main__":

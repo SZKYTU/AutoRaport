@@ -41,6 +41,7 @@ class Protocol(Base):
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
     laptop_id = Column(Integer, ForeignKey('laptops.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     charger = Column(String(50))
     coment = Column(String(200))
     scan = Column(LargeBinary)
@@ -51,8 +52,9 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
-    imie = Column(String(50), nullable=False)
-    nazwisko = Column(String(50), nullable=False)
+    name = Column(String(50), nullable=False)
+    l_name = Column(String(50), nullable=False)
+    domain_login = Column(String(50), nullable=False)
 
     
 Base.metadata.create_all(engine)
