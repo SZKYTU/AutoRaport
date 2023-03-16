@@ -39,13 +39,23 @@ def add_laptop():
 
 @app.route('/protocol/users', methods=['GET'])
 def get_users():
-    l_name = request.args.get('nazwisko')
-    print(f"last{l_name}")
-    users = session.query(User).filter_by(l_name=l_name).all()
-    users_dict = [{'id': user.id, 'imie': user.name,
-                   'nazwisko': user.l_name} for user in users]
-    print(users_dict)
+    domain_login = request.args.get('domain_login')
+    users = session.query(User).filter_by(domain_login=domain_login).all()
+    users_dict = [{'id': user.id, 'name': user.name, 'l_name': user.l_name,
+                   'domain_login': user.domain_login} for user in users]
+    print(f"latopt {users_dict}")
     return jsonify(users_dict)
+
+
+@app.route('/protocol/laptops', methods=['GET'])
+def get_laptops():
+    company = request.args.get('company')
+    laptops = session.query(Laptop).filter_by(company=company).all()
+    laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
+                     'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status} for laptop in laptops]
+    print(f"latopt {laptops_dict}")
+    return jsonify(laptops_dict)
+
 
 if __name__ == "__main__":
     app.run()

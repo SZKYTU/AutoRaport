@@ -1,47 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Formularz</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protokół</title>
 </head>
 
 <body>
-    <form id="myForm">
-        <label for="nazwisko">Nazwisko:</label>
-        <input type="text" id="nazwisko" name="nazwisko"><br>
+    <h1>Protokół</h1>
 
-        <label for="firma">Firma:</label>
-        <select id="firma" name="firma">
-            <option value="Telforceone">Telforceone</option>
-            <option value="mptech">mptech</option>
-            <option value="teletorum">teletorum</option>
-        </select><br>
-
-        <label for="laptop">Laptop:</label>
-        <input type="text" id="laptop" name="laptop"><br>
-
-        <input type="submit" value="submit">
+    <h2>Użytkownicy</h2>
+    <form id="user-form">
+        <label for="domain_login">Login domenowy:</label>
+        <input type="text" id="domain_login" name="domain_login">
+        <button type="submit">Szukaj</button>
     </form>
-
-    <table id="usersTable">
+    <table>
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Imię</th>
                 <th>Nazwisko</th>
+                <th>Login domenowy</th>
+                <th>Firma</th>
+                <th>Zaznacz</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="user-table-body">
+        </tbody>
     </table>
 
-    <div>
-    </div>
+    <h2>Laptopy</h2>
+    <form id="laptop-form">
+        <label for="laptop-company">Firma:</label>
+        <select id="laptop-company" name="laptop-company">
+            <option value="TelForceOne">TelForceOne</option>
+            <option value="MpTech">MpTech</option>
+            <option value="Teletorium">Teletorium</option>
+            <option value="R2">R2</option>
+            <option value="Momi">Momi</option>
+        </select>
+        <button type="submit">Szukaj</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Numer seryjny</th>
+                <th>Model</th>
+                <th>Komentarz</th>
+                <th>Firma</th>
+                <th>Status</th>
+                <th>Zaznacz</th>
+            </tr>
+        </thead>
+        <tbody id="laptop-table-body">
+        </tbody>
+    </table>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
     <script src="{{ url_for('static', filename='protocol_post.js') }}"></script>
-
 </body>
 
 </html>
