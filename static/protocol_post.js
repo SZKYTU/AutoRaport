@@ -1,7 +1,10 @@
+const company = document.querySelector("#laptop-company");
 const userForm = document.querySelector('#user-form');
 const userTableBody = document.querySelector('#user-table-body');
 const laptopForm = document.querySelector('#laptop-form');
 const laptopTableBody = document.querySelector('#laptop-table-body');
+
+const devices = []; 
 
 userForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -25,6 +28,7 @@ userForm.addEventListener('submit', (event) => {
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
 
+
                 idCell.textContent = user.id;
                 nameCell.textContent = user.name;
                 lastNameCell.textContent = user.l_name;
@@ -46,11 +50,10 @@ userForm.addEventListener('submit', (event) => {
         .catch(error => console.error(error));
 });
 
-laptopForm.addEventListener('submit', (event) => {
+company.addEventListener('change', (event) => {
     event.preventDefault();
-    const company = document.querySelector('#laptop-company').value;
 
-    const url = `/protocol/laptops?company=${company}`;
+    const url = `/protocol/laptops?company=${company.value}`;
 
     fetch(url)
         .then(response => response.json())
@@ -68,6 +71,12 @@ laptopForm.addEventListener('submit', (event) => {
                 const checkboxCell = document.createElement('td');
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
+                checkbox.addEventListener("change", event => {
+                    console.log("cokolwiek", event.target.checked)
+                    if (event.target.checked) devices.push(laptop.id)
+                    else devices.filter(id => id !== laptop.id) 
+                })
+               
 
                 idCell.textContent = laptop.id;
                 serialNumberCell.textContent = laptop.serial_number;
