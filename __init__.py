@@ -57,5 +57,14 @@ def get_laptops():
     return jsonify(laptops_dict)
 
 
+@app.route('/protocol/return', methods=['POST'])
+def protoco_return():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'response error'}), 400
+    if len(data) != 3:
+        return jsonify({'error': 'response error (array)'}), 400
+    return jsonify({'success': 'success'})
+
 if __name__ == "__main__":
     app.run()

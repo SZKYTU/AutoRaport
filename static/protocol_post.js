@@ -4,17 +4,22 @@ const userTableBody = document.querySelector('#user-table-body');
 const laptopForm = document.querySelector('#laptop-form');
 const laptopTableBody = document.querySelector('#laptop-table-body');
 
+const generateButton = document.getElementById('generate');
+
+
+
 const devices = []; 
+
 
 userForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const domainLogin = document.querySelector('#domain_login').value;
-
+    
     const url = `/protocol/users?domain_login=${domainLogin}`;
-
+    
     fetch(url)
-        .then(response => response.json())
-        .then(users => {
+    .then(response => response.json())
+    .then(users => {
             userTableBody.innerHTML = '';
 
             users.forEach(user => {
@@ -26,29 +31,34 @@ userForm.addEventListener('submit', (event) => {
                 const companyCell = document.createElement('td');
                 const checkboxCell = document.createElement('td');
                 const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
+                checkbox.type = 'radio';
 
-
+                checkbox.addEventListener("change", event => {
+                    console.log("cokolwiek", event.target.checked)
+                    if (event.target.checked) devices.push(user.id)
+                    else devices.filter(id => id !== user.id)
+                })
+                
                 idCell.textContent = user.id;
                 nameCell.textContent = user.name;
                 lastNameCell.textContent = user.l_name;
                 domainLoginCell.textContent = user.domain_login;
                 companyCell.textContent = user.company;
-
+                
                 checkboxCell.appendChild(checkbox);
-
+                
                 row.appendChild(idCell);
                 row.appendChild(nameCell);
                 row.appendChild(lastNameCell);
                 row.appendChild(domainLoginCell);
                 row.appendChild(companyCell);
                 row.appendChild(checkboxCell);
-
+                
                 userTableBody.appendChild(row);
             });
         })
         .catch(error => console.error(error));
-});
+    });
 
 company.addEventListener('change', (event) => {
     event.preventDefault();
@@ -70,7 +80,7 @@ company.addEventListener('change', (event) => {
                 const statusCell = document.createElement('td');
                 const checkboxCell = document.createElement('td');
                 const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
+                checkbox.type = 'radio';
                 checkbox.addEventListener("change", event => {
                     console.log("cokolwiek", event.target.checked)
                     if (event.target.checked) devices.push(laptop.id)
@@ -84,9 +94,9 @@ company.addEventListener('change', (event) => {
                 commentCell.textContent = laptop.comment;
                 companyCell.textContent = laptop.company;
                 statusCell.textContent = laptop.status;
-
+                
                 checkboxCell.appendChild(checkbox);
-
+                
                 row.appendChild(idCell);
                 row.appendChild(serialNumberCell);
                 row.appendChild(modelCell);
@@ -99,4 +109,17 @@ company.addEventListener('change', (event) => {
             });
         })
         .catch(error => console.error(error));
-});
+    });
+    
+    generateButton.addEventListener('click', function () {
+        fetch('/protocol/return', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(devices)
+        })
+            .then(response => response.json())
+            .then(devices => console.log(devices))
+            .catch(error => console.error(error));
+    });
