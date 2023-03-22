@@ -64,6 +64,7 @@ def protoco_return():
         return jsonify({'error': 'response error'}), 400
     if len(data) != 3:
         return jsonify({'error': 'response error (array)'}), 400
+    #data == [user.id, laptop.id, chargerStatus]
     return jsonify({'success': 'success'})
 
 if __name__ == "__main__":

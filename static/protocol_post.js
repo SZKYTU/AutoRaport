@@ -34,7 +34,6 @@ userForm.addEventListener('submit', (event) => {
                 checkbox.type = 'radio';
 
                 checkbox.addEventListener("change", event => {
-                    console.log("cokolwiek", event.target.checked)
                     if (event.target.checked) devices.push(user.id)
                     else devices.filter(id => id !== user.id)
                 })
@@ -82,7 +81,6 @@ company.addEventListener('change', (event) => {
                 const checkbox = document.createElement('input');
                 checkbox.type = 'radio';
                 checkbox.addEventListener("change", event => {
-                    console.log("cokolwiek", event.target.checked)
                     if (event.target.checked) devices.push(laptop.id)
                     else devices.filter(id => id !== laptop.id) 
                 })
@@ -112,10 +110,9 @@ company.addEventListener('change', (event) => {
     });
     
     generateButton.addEventListener('click', function () {
+
         const chargerCheckbox = document.getElementById('charger');
-
-        const chargerStatus = chargerCheckbox.checked ? 1 : 0;
-
+        const chargerStatus = chargerCheckbox.checked ? 1 : 0; //checkbox charger check
         devices.push(chargerStatus);
 
         fetch('/protocol/return', {

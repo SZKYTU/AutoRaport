@@ -38,7 +38,6 @@ class Protocol(Base):
 
     id = Column(Integer, primary_key=True)
     date = Column(DateTime, nullable=False)
-    first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
     laptop_id = Column(Integer, ForeignKey('laptops.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
