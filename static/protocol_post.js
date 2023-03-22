@@ -112,6 +112,12 @@ company.addEventListener('change', (event) => {
     });
     
     generateButton.addEventListener('click', function () {
+        const chargerCheckbox = document.getElementById('charger');
+
+        const chargerStatus = chargerCheckbox.checked ? 1 : 0;
+
+        devices.push(chargerStatus);
+
         fetch('/protocol/return', {
             method: 'POST',
             headers: {
@@ -123,3 +129,4 @@ company.addEventListener('change', (event) => {
             .then(devices => console.log(devices))
             .catch(error => console.error(error));
     });
+
