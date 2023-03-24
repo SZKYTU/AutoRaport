@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 from sqlalchemy.orm import sessionmaker
+from datetime import datetime
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.ext.declarative import declarative_base
-import requests
+from sqlalchemy.exc import IntegrityError
+
 
 app = Flask(__name__)
 
@@ -60,12 +62,29 @@ def get_laptops():
 @app.route('/protocol/return', methods=['POST'])
 def protoco_return():
     data = request.get_json()
+    #data == [user.id, laptop.id, chargerStatus] ...carbonara
     if not data:
         return jsonify({'error': 'response error'}), 400
     if len(data) != 3:
         return jsonify({'error': 'response error (array)'}), 400
-    #data == [user.id, laptop.id, chargerStatus]
-    return jsonify({'success': 'success'})
+
+    user = session.query(User).get(data[0])
+
+    protocol = Protocol(date=datetime.now(),
+                        last_name=user.l_name, 
+                        laptop_id=data[1],
+                        user_id=data[0], 
+                        charger=data[2], 
+                        coment='No comments', 
+                        scan=b'scan_data')
+    
+    try:
+        session.add(protocol)
+        session.commit()
+        return jsonify({'success': 'success'})
+    except IntegrityError:
+        session.rollback()  
+        return jsonify({'error': 'invalid data'})
 
 if __name__ == "__main__":
     app.run()
