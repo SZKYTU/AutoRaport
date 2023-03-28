@@ -4,6 +4,9 @@ from datetime import datetime
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import IntegrityError
+from flask_sqlalchemy import SQLAlchemy
+
+
 
 
 app = Flask(__name__)
@@ -20,6 +23,12 @@ def laptops():
 @app.route('/protocol')
 def protocol():
     return render_template('protocol.html')
+
+@app.route('/protocols/list')
+def protosols_list():
+    return render_template('protocol_list.html')
+
+
 
 @app.route('/laptops/add', methods=['POST'])
 def add_laptop():
@@ -76,7 +85,7 @@ def protoco_return():
                         user_id=data[0], 
                         charger=data[2], 
                         coment='No comments', 
-                        scan=b'scan_data')
+                        scan=b'None')
     
     try:
         session.add(protocol)
@@ -85,6 +94,22 @@ def protoco_return():
     except IntegrityError:
         session.rollback()  
         return jsonify({'error': 'invalid data'})
+
+
+@app.route('/protocols/show', methods=['GET'])
+def get_protocols():
+    protocols = session.query(Protocol).all()
+    results = []
+    for protocol in protocols:
+        result = {
+            'id': protocol.id,
+            'last_name': protocol.last_name,
+            'date': protocol.date.strftime('%d/%m/%Y'),
+            'coment': protocol.coment
+        }
+        results.append(result)
+    return jsonify(results)
+
 
 if __name__ == "__main__":
     app.run()
