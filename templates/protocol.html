@@ -1,51 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Protokół</title>
-</head>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<body>
-    <h1>Protokół</h1>
+  <body>
+    <div class="container">
+      <h1 class="mt-5 mb-3">Protokół</h1>
 
-    <h2>Użytkownicy</h2>
-    <form id="user-form">
-        <label for="domain_login">Login domenowy:</label>
-        <input type="text" id="domain_login" name="domain_login">
-        <button type="submit">Szukaj</button>
-    </form>
-    <table>
-        <thead>
-            <tr>
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Użytkownicy</h2>
+          <form id="user-form">
+            <div class="form-group">
+              <label for="domain-login">Login domenowy:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="domain-login"
+                name="domain-login"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary mb-3">Szukaj</button>
+          </form>
+          <table class="table">
+            <thead>
+              <tr>
                 <th>ID</th>
                 <th>Imię</th>
                 <th>Nazwisko</th>
                 <th>Login domenowy</th>
                 <th>Firma</th>
                 <th>Zaznacz</th>
-            </tr>
-        </thead>
-        <tbody id="user-table-body">
-        </tbody>
-    </table>
+              </tr>
+            </thead>
+            <tbody id="user-table-body"></tbody>
+          </table>
+        </div>
 
-    <h2>Laptopy</h2>
-    <form id="laptop-form">
-        <label for="laptop-company">Firma:</label>
-        <select id="laptop-company" name="laptop-company">
-            <option value="None">None</option>
-            <option value="TelForceOne">TelForceOne</option>
-            <option value="MpTech">MpTech</option>
-            <option value="Teletorium">Teletorium</option>
-            <option value="R2">R2</option>
-            <option value="Momi">Momi</option>
-        </select>
-    </form>
-    <table>
-        <thead>
-            <tr>
+        <div class="col-md-6">
+          <h2>Laptopy</h2>
+          <form id="laptop-form">
+            <div class="form-group">
+              <label for="laptop-company">Firma:</label>
+              <select
+                class="form-control"
+                id="laptop-company"
+                name="laptop-company"
+              >
+                <option value="None">None</option>
+                <option value="TelForceOne">TelForceOne</option>
+                <option value="MpTech">MpTech</option>
+                <option value="Teletorium">Teletorium</option>
+                <option value="R2">R2</option>
+                <option value="Momi">Momi</option>
+              </select>
+            </div>
+          </form>
+          <table class="table">
+            <thead>
+              <tr>
                 <th>ID</th>
                 <th>Numer seryjny</th>
                 <th>Model</th>
@@ -53,21 +75,27 @@
                 <th>Firma</th>
                 <th>Status</th>
                 <th>Zaznacz</th>
-            </tr>
-        </thead>
-        <tbody id="laptop-table-body">
-        </tbody>
-    </table>
+              </tr>
+            </thead>
+            <tbody id="laptop-table-body"></tbody>
+          </table>
 
-    <div>
-        <label for="charger">Charger:</label>
-        <input type="checkbox" id="charger" name="charger">
+          <div class="form-check mb-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="charger"
+              name="charger"
+            />
+            <label class="form-check-label" for="charger">Charger:</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button id="generate" class="btn btn-success">Generuj</button>
+      </div>
     </div>
-    
-    
-    <button id="generate">Generuj</button>
     <script src="{{ url_for('static', filename='protocol_post.js') }}"></script>
-    
-</body>
-
+  </body>
 </html>
