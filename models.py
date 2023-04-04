@@ -1,24 +1,18 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Text, ForeignKey, DateTime, LargeBinary
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, LargeBinary
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql.expression import text
-
-import os
-import pyodbc
+from sqlalchemy.orm import relationship
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
-conn = pyodbc.connect(
-    driver='{ODBC Driver 17 for SQL Server}',
-    server=os.getenv('DB_HOST'),
-    database=os.getenv('DB_NAME'),
-    uid=os.getenv('DB_USER'),
-    pwd=os.getenv('DB_PASS')
-)
+server=os.getenv('DB_HOST'),
+database=os.getenv('DB_NAME'),
+uid=os.getenv('DB_USER'),
+pwd=os.getenv('DB_PASS'),
 
-engine = create_engine('mssql+pyodbc://', creator=lambda: conn)
-
+engine = create_engine(f'mssql+pymssql://{uid}:{pwd}@{server}:1433/{database}')
 Base = declarative_base()
 
 
