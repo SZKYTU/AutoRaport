@@ -1,14 +1,50 @@
-<table id="protocolsTable">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Last Name</th>
-      <th>Date</th>
-      <th>Comment</th>
-    </tr>
-  </thead>
-  <tbody>
-      <script src="{{ url_for('static', filename='protocol_get.js') }}"></script>
-  </tbody>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Protocols Table</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Protocols Table</h1>
+      <input
+        class="form-control mb-3"
+        id="searchInput"
+        type="text"
+        placeholder="Search by Last Name"
+      />
+      <table id="protocolsTable" class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Last Name</th>
+            <th>Date</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <script src="{{ url_for('static', filename='protocol_get.js') }}"></script>
+        </tbody>
+      </table>
+    </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#searchInput").on("keyup", function () {
+          var value = $(this).val().toLowerCase();
+          $("#protocolsTable tbody tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+          });
+        });
+      });
+    </script>
+  </body>
 </html>
