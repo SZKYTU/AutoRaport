@@ -15,6 +15,9 @@ Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
 
+@app.route('/start')
+def start():
+    return render_template('index.html')
 
 @app.route('/laptop')
 def laptops():
