@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Protocol View</title>
+  </head>
+  <body>
+    <h1>Protocol View for Protocol ID: {{ protocol_id }}</h1>
+    <table id="protocolTable">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Model</th>
+          <th>Serial Number</th>
+          <th>Status</th>
+          <th>Last Name</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      const protocol_id = {{protocol_id}};
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", `/protocol/${protocol_id}`);
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          const protocol = JSON.parse(xhr.responseText);
+          const tableBody = document.querySelector("#protocolTable tbody");
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${protocol.laptop.company}</td>
+            <td>${protocol.laptop.model}</td>
+            <td>${protocol.laptop.serial_number}</td>
+            <td>${protocol.laptop.status}</td>
+            <td>${protocol.protocol.last_name}</td>
+            <td>${protocol.protocol.date}</td>
+          `;
+          tableBody.appendChild(row);
+        } else {
+          console.error(xhr.statusText);
+        }
+      };
+      xhr.onerror = () => console.error(xhr.statusText);
+      xhr.send();
+    </script>
+  </body>
+</html>

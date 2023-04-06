@@ -28,6 +28,10 @@ def protocol():
 def protosols_list():
     return render_template('protocol_list.html')
 
+@app.route('/protocol/view/<int:protocol_id>', methods=['GET'])
+def get_protocol_view(protocol_id):
+    return render_template('protocol_form.html', protocol_id=protocol_id)
+
 
 
 @app.route('/laptops/add', methods=['POST'])
@@ -110,6 +114,30 @@ def get_protocols():
         results.append(result)
     return jsonify(results)
 
+
+@app.route('/protocol/<int:protocol_id>', methods=['GET'])
+def get_protocol(protocol_id):
+    session = Session()
+    protocol = session.query(Protocol).filter(Protocol.id == protocol_id).first()
+    laptop = session.query(Laptop).filter(Laptop.id == protocol.laptop_id).first()
+    session.close()
+    if protocol:
+        response_data = {
+        'protocol': {
+            'id': protocol.id,
+            'date': protocol.date.strftime('%d/%m/%Y'),
+            'last_name': protocol.last_name,
+            'laptop_id': protocol.laptop_id,
+        },
+        'laptop': {
+            'serial_number': laptop.serial_number,
+            'model': laptop.model,
+            'company': laptop.company,
+            'status': laptop.status,
+        }}
+        return jsonify(response_data)
+    else:
+        return jsonify({'message': 'Protocol not found'}), 404
 
 if __name__ == "__main__":
     app.run()

@@ -1,41 +1,22 @@
-var protocols = [];
-
-function loadProtocols() {
-    var lastName = document.getElementById("last-name-input").value;
-    var filteredProtocols = protocols;
-    if (lastName) {
-        filteredProtocols = protocols.filter(function (protocol) {
-            return protocol.last_name.toLowerCase().indexOf(lastName.toLowerCase()) !== -1;
-        });
-    }
-    var sortedProtocols = filteredProtocols.sort(function (a, b) {
-        return new Date(b.date) - new Date(a.date);
+const xhr = new XMLHttpRequest();
+xhr.open("GET", "/protocols/show");
+xhr.onload = () => {
+  if (xhr.status === 200) {
+    const protocols = JSON.parse(xhr.responseText);
+    const tableBody = document.querySelector("#protocolsTable tbody");
+    protocols.forEach((protocol) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+          <td><a href="/protocol/view/${protocol.id}">${protocol.id}</a></td>
+          <td>${protocol.last_name}</td>
+          <td>${protocol.date}</td>
+          <td>${protocol.comment}</td>
+        `;
+      tableBody.appendChild(row);
     });
-    var first10Protocols = sortedProtocols.slice(0, 10);
-    var html = "";
-    for (var i = 0; i < first10Protocols.length; i++) {
-        html += "<tr><td>" + first10Protocols[i].id + "</td><td>" + first10Protocols[i].last_name + "</td><td>" + first10Protocols[i].date + "</td><td>" + first10Protocols[i].comment + "</td></tr>";
-    }
-    document.getElementById("protocols-table").getElementsByTagName("tbody")[0].innerHTML = html;
-}
-
-function init() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            protocols = JSON.parse(this.responseText);
-            loadProtocols();
-        }
-    };
-    xhttp.open("GET", "/protocols/show", true);
-    xhttp.send();
-}
-
-document.addEventListener("DOMContentLoaded", init);
-
-document.getElementById("last-name-input").addEventListener("keyup", function (event) {
-    if (event.keyCode === 13) {
-        event.preventDefault();
-        loadProtocols();
-    }
-});
+  } else {
+    console.error(xhr.statusText);
+  }
+};
+xhr.onerror = () => console.error(xhr.statusText);
+xhr.send();

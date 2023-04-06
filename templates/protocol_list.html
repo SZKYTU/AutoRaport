@@ -1,38 +1,14 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>Protocols Table</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-
-<body>
-
-    <div class="container">
-        <h2>Protocols Table</h2>
-        <div class="form-group">
-            <label for="last-name-input">Last Name:</label>
-            <input type="text" class="form-control" id="last-name-input">
-        </div>
-        <button type="button" class="btn btn-primary" onclick="loadProtocols()">Load Protocols</button>
-        <table class="table table-striped table-bordered" id="protocols-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Last Name</th>
-                    <th>Date</th>
-                    <th>Comment</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-
-
-<script src="{{ url_for('static', filename='protocol_get.js') }}"></script>
-</body>
+<table id="protocolsTable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Last Name</th>
+      <th>Date</th>
+      <th>Comment</th>
+    </tr>
+  </thead>
+  <tbody>
+      <script src="{{ url_for('static', filename='protocol_get.js') }}"></script>
+  </tbody>
 
 </html>
