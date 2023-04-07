@@ -1,12 +1,10 @@
 from flask import Flask, render_template, request, jsonify
-from sqlalchemy.orm import sessionmaker
-from datetime import datetime
-from models import Protocol, Laptop, engine, User
 from sqlalchemy.ext.declarative import declarative_base
+from models import Protocol, Laptop, engine, User
 from sqlalchemy.exc import IntegrityError
 from flask_sqlalchemy import SQLAlchemy
-
-
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -15,6 +13,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
 
+#Page servis
 @app.route('/start')
 def start():
     return render_template('index.html')
@@ -36,7 +35,7 @@ def get_protocol_view(protocol_id):
     return render_template('protocol_form.html', protocol_id=protocol_id)
 
 
-
+#API servis
 @app.route('/laptops/add', methods=['POST'])
 def add_laptop():
   data = request.get_json()
