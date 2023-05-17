@@ -1,41 +1,44 @@
-from reportlab.pdfgen import canvas as pdf_canvas
+from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from flask import send_file
 from reportlab.lib.units import inch
 from datetime import datetime
+import tempfile
+from flask import make_response
 
 
-def generate_pdf(model_laptop, serial_number, pracownik, typ):
-    pdf_name = "protocol.pdf"
+def generate_pdf(model_laptop, serial_number, pracownik, typ, protocolid):
     header = "Delivery/Receipt Protocol"
     sentence = f"Ja {pracownik} odbieram poniższy sprzęt: "
     current_date = datetime.now().strftime("%d/%m/%y")
 
-    # pdfmetrics.registerFont(
-    #     TTFont('LiberationSans', 'LiberationSans-Regular.ttf'))
-    # pdfmetrics.registerFont(
-    #     TTFont('LiberationSans-Bold', 'LiberationSans-Bold.ttf'))
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_file:
+        pdf_name = temp_file.name
 
-    canvas = pdf_canvas.Canvas(pdf_name, pagesize=letter)
-    canvas.setFont("Helvetica-Bold", 16)
-    canvas.drawCentredString(4.25*inch, 10.5*inch - 0.5*inch, header)
-    canvas.setFont("Helvetica", 12)
-    canvas.drawString(1*inch, 10.5*inch - 1.75*inch, sentence)
-    canvas.drawString(1*inch, 10.5*inch - 2.25*inch,
-                      f"Laptop Model: {model_laptop}")
-    canvas.drawString(1*inch, 10.5*inch - 2.5*inch,
-                      f"Serial Number: {serial_number}")
-    canvas.drawString(1*inch, 10.5*inch - 2.75*inch,
-                      f"Date: {current_date}")
+        c = canvas.Canvas(pdf_name, pagesize=letter)
 
-    wydajacy_x = 1 * inch
-    wydajacy_y = 1.5 * inch
+        c.setFont("Helvetica-Bold", 16)
+        c.setFont("Helvetica", 12)
 
-    odbiorca_x = letter[0] - \
-        canvas.stringWidth("Recipient", "Helvetica", 12) - 1 * inch
-    odbiorca_y = 1.5 * inch
+        # Rysowanie treści dokumentu
+        c.drawCentredString(4.25*inch, 10.5*inch - 0.5*inch, header)
+        c.drawString(1*inch, 10.5*inch - 1.75*inch, sentence)
+        c.drawString(1*inch, 10.5*inch - 2.25*inch, f"Laptop Model: {model_laptop}")
+        c.drawString(1*inch, 10.5*inch - 2.5*inch, f"Serial Number: {serial_number}")
+        c.drawString(1*inch, 10.5*inch - 2.75*inch, f"Date: {current_date}")
 
-    canvas.drawString(wydajacy_x, wydajacy_y, "Issuer")
-    canvas.drawString(odbiorca_x, odbiorca_y, "Recipient")
+        wydajacy_x = 1 * inch
+        wydajacy_y = 1.5 * inch
 
-    canvas.showPage()
-    canvas.save()
+        odbiorca_x = letter[0] - c.stringWidth("Recipient", "Helvetica", 12) - 1 * inch
+        odbiorca_y = 1.5 * inch
+
+        c.drawString(wydajacy_x, wydajacy_y, "Issuer")
+        c.drawString(odbiorca_x, odbiorca_y, "Recipient")
+
+        c.showPage()
+        c.save()
+
+    response = make_response(send_file(pdf_name, as_attachment=True))
+    response.headers["Content-Disposition"] = f"attachment; filename={protocolid}.pdf"
+    return response

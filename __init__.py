@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from sqlalchemy.ext.declarative import declarative_base
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.exc import IntegrityError
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import sessionmaker
+from protocol_gen import generate_pdf
 from datetime import datetime
+import joblib
 
 
 app = Flask(__name__)
@@ -13,10 +15,18 @@ Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
 
+
+
 #Page servis
 @app.route('/start')
 def start():
     return render_template('index.html')
+
+# @app.route('/test')
+# def test():
+
+#     pdf_file = generate_pdf(model_laptop, serial_number, pracownik, typ, protocolid)
+#     return pdf_file
 
 @app.route('/laptop')
 def laptops():
