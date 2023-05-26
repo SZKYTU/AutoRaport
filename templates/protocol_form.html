@@ -50,5 +50,12 @@
       xhr.onerror = () => console.error(xhr.statusText);
       xhr.send();
     </script>
+    <button onclick="window.location.href = '/protocol/gen/{{protocol_id}}'">
+      Generate Protocol
+    </button>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" />
+      <input type="submit" value="Upload" />
+    </form>
   </body>
 </html>

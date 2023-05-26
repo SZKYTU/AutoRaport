@@ -22,11 +22,14 @@ Base = declarative_base()
 def start():
     return render_template('index.html')
 
-# @app.route('/test')
-# def test():
+@app.route('/protocol/gen/<int:protocol_id>', methods=['GET']) #FIXME:
+def gen_protocol(protocol_id):
+    # pdf_file = generate_pdf("model_laptop", "serial_number", "pracownik", "typ", protocol_id)
+    # return pdf_file
 
-#     pdf_file = generate_pdf(model_laptop, serial_number, pracownik, typ, protocolid)
-#     return pdf_file
+@app.route('/protocol/upload') # TODO:
+def protocol_upload():
+    pass
 
 @app.route('/laptop')
 def laptops():

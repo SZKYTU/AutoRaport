@@ -20,7 +20,6 @@ def generate_pdf(model_laptop, serial_number, pracownik, typ, protocolid):
         c.setFont("Helvetica-Bold", 16)
         c.setFont("Helvetica", 12)
 
-        # Rysowanie treści dokumentu
         c.drawCentredString(4.25*inch, 10.5*inch - 0.5*inch, header)
         c.drawString(1*inch, 10.5*inch - 1.75*inch, sentence)
         c.drawString(1*inch, 10.5*inch - 2.25*inch, f"Laptop Model: {model_laptop}")
