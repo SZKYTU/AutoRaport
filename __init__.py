@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, send_file
 from sqlalchemy.ext.declarative import declarative_base
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.exc import IntegrityError
-from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
 from sqlalchemy.orm import sessionmaker
 from protocol_gen import generate_pdf
 from datetime import datetime
@@ -14,7 +14,7 @@ app = Flask(__name__)
 Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
-
+app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024 
 
 
 #Page servis
@@ -24,12 +24,34 @@ def start():
 
 @app.route('/protocol/gen/<int:protocol_id>', methods=['GET']) #FIXME:
 def gen_protocol(protocol_id):
-    # pdf_file = generate_pdf("model_laptop", "serial_number", "pracownik", "typ", protocol_id)
-    # return pdf_file
+    pdf_file = generate_pdf("model_laptop", "serial_number", "pracownik", "typ", protocol_id)
+    return pdf_file
 
-@app.route('/protocol/upload') # TODO:
+@app.route('/protocol/upload', methods=['GET', 'POST']) # TODO:
 def protocol_upload():
-    pass
+    file = request.files['file']
+
+    if file and allowed_file(file.filename):
+        if file.content_length > app.config['MAX_CONTENT_LENGTH']:
+            return 'File size exceeds the limit. Max size allowed is 1 MB.'
+
+        filename = secure_filename(file.filename)
+        if filename.endswith('.pdf'):
+            file_data = file.read()
+            session = Session()
+            protocol = session.query(Protocol).filter_by(id=25).first() #FIXME: 
+            if protocol:
+                protocol.scan = file_data  
+                session.commit()
+                session.close()
+                return 'File uploaded and updated successfully.'
+            else:
+                return 'Protocol with id=1002 not found.'
+
+    return 'Invalid file. Only PDF files are allowed.'
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
 
 @app.route('/laptop')
 def laptops():
