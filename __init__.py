@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify
 from sqlalchemy.ext.declarative import declarative_base
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.exc import IntegrityError
@@ -6,7 +6,6 @@ from werkzeug.utils import secure_filename
 from sqlalchemy.orm import sessionmaker
 from protocol_gen import generate_pdf
 from datetime import datetime
-import joblib
 
 
 app = Flask(__name__)
@@ -14,21 +13,25 @@ app = Flask(__name__)
 Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
-app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024 
+app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
 
-#Page servis
+# Page servis
 @app.route('/start')
 def start():
     return render_template('index.html')
 
-@app.route('/protocol/gen/<int:protocol_id>', methods=['GET']) #FIXME:
+
+@app.route('/protocol/gen/<int:protocol_id>', methods=['GET'])  # FIXME:
 def gen_protocol(protocol_id):
-    pdf_file = generate_pdf("model_laptop", "serial_number", "pracownik", "typ", protocol_id)
+    pdf_file = generate_pdf("model_laptop", "serial_number",
+                            "pracownik", "typ", protocol_id)
     return pdf_file
 
-@app.route('/protocol/upload', methods=['GET', 'POST']) # TODO:
-def protocol_upload():
+
+# TODO:
+@app.route('/protocol/upload/<int:protocol_id>', methods=['GET', 'POST'])
+def protocol_upload(protocol_id):
     file = request.files['file']
 
     if file and allowed_file(file.filename):
@@ -39,54 +42,60 @@ def protocol_upload():
         if filename.endswith('.pdf'):
             file_data = file.read()
             session = Session()
-            protocol = session.query(Protocol).filter_by(id=25).first() #FIXME: 
+            protocol = session.query(Protocol).filter_by(
+                id=protocol_id).first()
             if protocol:
-                protocol.scan = file_data  
+                protocol.scan = file_data
                 session.commit()
                 session.close()
                 return 'File uploaded and updated successfully.'
             else:
-                return 'Protocol with id=1002 not found.'
+                return f'Protocol with id={protocol_id} not found.'
 
     return 'Invalid file. Only PDF files are allowed.'
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
+
 
 @app.route('/laptop')
 def laptops():
     return render_template('laptops.html')
 
+
 @app.route('/protocol')
 def protocol():
     return render_template('protocol.html')
 
+
 @app.route('/protocols/list')
 def protosols_list():
     return render_template('protocol_list.html')
+
 
 @app.route('/protocol/view/<int:protocol_id>', methods=['GET'])
 def get_protocol_view(protocol_id):
     return render_template('protocol_form.html', protocol_id=protocol_id)
 
 
-#API servis
+# API servis
 @app.route('/laptops/add', methods=['POST'])
 def add_laptop():
-  data = request.get_json()
+    data = request.get_json()
 
-  laptop = Laptop(
-      serial_number=data['serial_number'],
-      model=data['model'],
-      coment=data['coment'],
-      company=data['company'],
-      status=data['status']
-  )
-  session = Session()
-  session.add(laptop)
-  session.commit()
+    laptop = Laptop(
+        serial_number=data['serial_number'],
+        model=data['model'],
+        coment=data['coment'],
+        company=data['company'],
+        status=data['status']
+    )
+    session = Session()
+    session.add(laptop)
+    session.commit()
 
-  return jsonify({'success': True, 'message': 'Equipment added successfully!'})
+    return jsonify({'success': True, 'message': 'Equipment added successfully!'})
 
 
 @app.route('/protocol/users', methods=['GET'])
@@ -112,7 +121,7 @@ def get_laptops():
 @app.route('/protocol/return', methods=['POST'])
 def protoco_return():
     data = request.get_json()
-    #data == [user.id, laptop.id, chargerStatus] ...carbonara
+    # data == [user.id, laptop.id, chargerStatus] ...carbonara
     if not data:
         return jsonify({'error': 'response error'}), 400
     if len(data) != 3:
@@ -121,19 +130,19 @@ def protoco_return():
     user = session.query(User).get(data[0])
 
     protocol = Protocol(date=datetime.now(),
-                        last_name=user.l_name, 
+                        last_name=user.l_name,
                         laptop_id=data[1],
-                        user_id=data[0], 
-                        charger=data[2], 
-                        coment='No comments', 
+                        user_id=data[0],
+                        charger=data[2],
+                        coment='No comments',
                         scan=b'None')
-    
+
     try:
         session.add(protocol)
         session.commit()
         return jsonify({'success': 'success'})
     except IntegrityError:
-        session.rollback()  
+        session.rollback()
         return jsonify({'error': 'invalid data'})
 
 
@@ -155,26 +164,29 @@ def get_protocols():
 @app.route('/protocol/<int:protocol_id>', methods=['GET'])
 def get_protocol(protocol_id):
     session = Session()
-    protocol = session.query(Protocol).filter(Protocol.id == protocol_id).first()
-    laptop = session.query(Laptop).filter(Laptop.id == protocol.laptop_id).first()
+    protocol = session.query(Protocol).filter(
+        Protocol.id == protocol_id).first()
+    laptop = session.query(Laptop).filter(
+        Laptop.id == protocol.laptop_id).first()
     session.close()
     if protocol:
         response_data = {
-        'protocol': {
-            'id': protocol.id,
-            'date': protocol.date.strftime('%d/%m/%Y'),
-            'last_name': protocol.last_name,
-            'laptop_id': protocol.laptop_id,
-        },
-        'laptop': {
-            'serial_number': laptop.serial_number,
-            'model': laptop.model,
-            'company': laptop.company,
-            'status': laptop.status,
-        }}
+            'protocol': {
+                'id': protocol.id,
+                'date': protocol.date.strftime('%d/%m/%Y'),
+                'last_name': protocol.last_name,
+                'laptop_id': protocol.laptop_id,
+            },
+            'laptop': {
+                'serial_number': laptop.serial_number,
+                'model': laptop.model,
+                'company': laptop.company,
+                'status': laptop.status,
+            }}
         return jsonify(response_data)
     else:
         return jsonify({'message': 'Protocol not found'}), 404
+
 
 if __name__ == "__main__":
     app.run()

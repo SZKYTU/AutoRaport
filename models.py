@@ -7,13 +7,14 @@ import os
 
 load_dotenv()
 
-server=os.getenv('DB_HOST')
-database=os.getenv('DB_NAME')
-uid=os.getenv('DB_USER')
-pwd=os.getenv('DB_PASS')
+server = os.getenv('DB_HOST')
+database = os.getenv('DB_NAME')
+uid = os.getenv('DB_USER')
+pwd = os.getenv('DB_PASS')
 
 
-engine = create_engine(f'mssql+pymssql://{uid}:{pwd}@10.10.1.15:1433/{database}')
+engine = create_engine(
+    f'mssql+pymssql://{uid}:{pwd}@localhost:1433/{database}')
 Base = declarative_base()
 
 
@@ -50,5 +51,5 @@ class User(Base):
     l_name = Column(String(50), nullable=False)
     domain_login = Column(String(50), nullable=False)
 
-    
+
 Base.metadata.create_all(engine)
