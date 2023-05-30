@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file, make_response
 from sqlalchemy.ext.declarative import declarative_base
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.exc import IntegrityError
@@ -21,42 +21,6 @@ app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 def start():
     return render_template('index.html')
 
-
-@app.route('/protocol/gen/<int:protocol_id>', methods=['GET'])  # FIXME:
-def gen_protocol(protocol_id):
-    pdf_file = generate_pdf("model_laptop", "serial_number",
-                            "pracownik", "typ", protocol_id)
-    return pdf_file
-
-
-# TODO:
-@app.route('/protocol/upload/<int:protocol_id>', methods=['GET', 'POST'])
-def protocol_upload(protocol_id):
-    file = request.files['file']
-
-    if file and allowed_file(file.filename):
-        if file.content_length > app.config['MAX_CONTENT_LENGTH']:
-            return 'File size exceeds the limit. Max size allowed is 1 MB.'
-
-        filename = secure_filename(file.filename)
-        if filename.endswith('.pdf'):
-            file_data = file.read()
-            session = Session()
-            protocol = session.query(Protocol).filter_by(
-                id=protocol_id).first()
-            if protocol:
-                protocol.scan = file_data
-                session.commit()
-                session.close()
-                return 'File uploaded and updated successfully.'
-            else:
-                return f'Protocol with id={protocol_id} not found.'
-
-    return 'Invalid file. Only PDF files are allowed.'
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
 
 
 @app.route('/laptop')
@@ -187,6 +151,50 @@ def get_protocol(protocol_id):
     else:
         return jsonify({'message': 'Protocol not found'}), 404
 
+# TODO:
+@app.route('/protocol/upload/<int:protocol_id>', methods=['GET', 'POST'])
+def protocol_upload(protocol_id):
+    file = request.files['file']
+
+    if file and allowed_file(file.filename):
+        if file.content_length > app.config['MAX_CONTENT_LENGTH']:
+            return 'File size exceeds the limit. Max size allowed is 1 MB.'
+
+        filename = secure_filename(file.filename)
+        if filename.endswith('.pdf'):
+            file_data = file.read()
+            session = Session()
+            protocol = session.query(Protocol).filter_by(
+                id=protocol_id).first()
+            if protocol:
+                protocol.scan = file_data
+                session.commit()
+                session.close()
+                return 'File uploaded and updated successfully.'
+            else:
+                return f'Protocol with id={protocol_id} not found.'
+
+    return 'Invalid file. Only PDF files are allowed.'
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
+
+@app.route('/protocol/download/<int:protocol_id>', methods=['GET', 'POST'])
+def protocol_download(protocol_id):
+    protocol = session.query(Protocol).first()
+    session.close()
+
+    response = make_response(protocol.scan)
+    response.headers['Content-Disposition'] = f'attachment; filename=scan - {protocol.last_name}.pdf'
+    response.headers['Content-Type'] = 'application/pdf'
+    return response
+
+@app.route('/protocol/gen/<int:protocol_id>', methods=['GET'])  # FIXME:
+def gen_protocol(protocol_id):
+    pdf_file = generate_pdf("model_laptop", "serial_number",
+                            "pracownik", "typ", protocol_id)
+    return pdf_file
 
 if __name__ == "__main__":
     app.run()
