@@ -14,7 +14,8 @@ pwd = os.getenv('DB_PASS')
 
 
 engine = create_engine(
-    f'mssql+pymssql://{uid}:{pwd}@10.10.1.15:1433/{database}')
+    # f'mssql+pymssql://{uid}:{pwd}@10.10.1.15:1433/{database}')
+    f'mssql+pymssql://{uid}:{pwd}@localhost:1433/{database}')
 Base = declarative_base()
 
 

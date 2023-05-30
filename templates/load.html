@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Strona z informacją o pobraniu pliku</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/load.css') }}"
+    />
+    <script>
+      setTimeout(function () {
+        window.history.go(-1);
+      }, 3000);
+    </script>
+  </head>
+  <body>
+    <div class="lds-ripple">
+      <div></div>
+      <div></div>
+    </div>
+  </body>
+</html>

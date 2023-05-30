@@ -21,6 +21,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 def start():
     return render_template('index.html')
 
+
 @app.route('/laptop')
 def laptops():
     return render_template('laptops.html')
@@ -150,6 +151,8 @@ def get_protocol(protocol_id):
         return jsonify({'message': 'Protocol not found'}), 404
 
 # TODO:
+
+
 @app.route('/protocol/upload/<int:protocol_id>', methods=['GET', 'POST'])
 def protocol_upload(protocol_id):
     file = request.files['file']
@@ -168,7 +171,7 @@ def protocol_upload(protocol_id):
                 protocol.scan = file_data
                 session.commit()
                 session.close()
-                return 'File uploaded and updated successfully.'
+                return render_template('load.html')
             else:
                 return f'Protocol with id={protocol_id} not found.'
 
@@ -178,21 +181,25 @@ def protocol_upload(protocol_id):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
 
+
 @app.route('/protocol/download/<int:protocol_id>', methods=['GET', 'POST'])
 def protocol_download(protocol_id):
     protocol = session.query(Protocol).first()
     session.close()
 
     response = make_response(protocol.scan)
-    response.headers['Content-Disposition'] = f'attachment; filename=scan - {protocol.last_name}.pdf'
+    response.headers[
+        'Content-Disposition'] = f'attachment; filename=scan - {protocol.last_name}.pdf'
     response.headers['Content-Type'] = 'application/pdf'
     return response
+
 
 @app.route('/protocol/gen/<int:protocol_id>', methods=['GET'])  # FIXME:
 def gen_protocol(protocol_id):
     pdf_file = generate_pdf("model_laptop", "serial_number",
                             "pracownik", "typ", protocol_id)
     return pdf_file
+
 
 if __name__ == "__main__":
     app.run()
