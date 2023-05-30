@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_file, make_response
+from flask import Flask, render_template, request, jsonify, abort, make_response
 from sqlalchemy.ext.declarative import declarative_base
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.exc import IntegrityError
@@ -98,7 +98,8 @@ def protoco_return():
                         user_id=data[0],
                         charger=data[2],
                         coment='No comments',
-                        scan=b'None')
+                        scan_receiving=b'None',
+                        scan_delivery=b'None')
 
     try:
         session.add(protocol)
@@ -153,8 +154,8 @@ def get_protocol(protocol_id):
 # TODO:
 
 
-@app.route('/protocol/upload/<int:protocol_id>', methods=['GET', 'POST'])
-def protocol_upload(protocol_id):
+@app.route('/protocol/upload/<int:protocol_id>/<string:type>', methods=['GET', 'POST'])
+def protocol_upload(protocol_id, type):
     file = request.files['file']
 
     if file and allowed_file(file.filename):
@@ -168,7 +169,12 @@ def protocol_upload(protocol_id):
             protocol = session.query(Protocol).filter_by(
                 id=protocol_id).first()
             if protocol:
-                protocol.scan = file_data
+                if type == 'receiving':
+                    protocol.scan_receiving = file_data
+                elif type == 'delivery':
+                    protocol.scan_delivery = file_data
+                else:
+                    abort(400, "Invalid argument!")
                 session.commit()
                 session.close()
                 return render_template('load.html')
@@ -182,6 +188,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
 
 
+# FIXME:
 @app.route('/protocol/download/<int:protocol_id>', methods=['GET', 'POST'])
 def protocol_download(protocol_id):
     protocol = session.query(Protocol).first()
@@ -194,11 +201,19 @@ def protocol_download(protocol_id):
     return response
 
 
-@app.route('/protocol/gen/<int:protocol_id>', methods=['GET'])  # FIXME:
-def gen_protocol(protocol_id):
-    pdf_file = generate_pdf("model_laptop", "serial_number",
-                            "pracownik", "typ", protocol_id)
-    return pdf_file
+# FIXME:
+@app.route('/protocol/gen/<int:protocol_id>/<string:type>', methods=['GET'])
+def gen_protocol(protocol_id, type):
+    if type == 'receiving':
+        response = generate_pdf("model_laptop", "serial_number",
+                                "pracownik", "receiving", protocol_id)
+    elif type == 'delivery':
+        response = generate_pdf("model_laptop", "serial_number",
+                                "pracownik", "delivery", protocol_id)
+    else:
+        abort(400, "Invalid argument!")
+
+    return response
 
 
 if __name__ == "__main__":

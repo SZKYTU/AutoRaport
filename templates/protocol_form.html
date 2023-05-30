@@ -10,7 +10,7 @@
     />
   </head>
   <body>
-    <h1 style="align-self: center">Protokół: {{ protocol_id }}</h1>
+    <h1 style="text-align: center">Protokół: {{ protocol_id }}</h1>
     <table id="protocolTable" class="table table-striped text-center">
       <thead class="thead-dark">
         <tr>
@@ -25,7 +25,7 @@
     </table>
 
     <script>
-      const protocol_id = {{protocol_id}};
+      const protocol_id = {{ protocol_id }};
       const xhr = new XMLHttpRequest();
       xhr.open("GET", `/protocol/${protocol_id}`);
       xhr.onload = () => {
@@ -48,18 +48,27 @@
       xhr.send();
     </script>
 
-    <div class="d-flex justify-content-center">
+    <div style="text-align: center">
       <button
         class="btn btn-primary"
-        onclick="window.location.href = '/protocol/gen/{{protocol_id}}'"
+        onclick="window.location.href = '/protocol/gen/{{ protocol_id }}/receiving'"
       >
-        Generuj protokol odbiorczy
+        Generuj protokół odbiorczy
       </button>
     </div>
 
-    <div class="d-flex justify-content-center">
+    <div style="text-align: center; margin-top: 10px">
+      <button
+        class="btn btn-primary"
+        onclick="window.location.href = '/protocol/gen/{{ protocol_id }}/delivery'"
+      >
+        Generuj protokół zdawczy
+      </button>
+    </div>
+
+    <div class="d-flex justify-content-center" style="margin-top: 10px">
       <form
-        action="/protocol/upload/{{protocol_id}}"
+        action="/protocol/upload/{{ protocol_id }}/receiving"
         method="post"
         enctype="multipart/form-data"
       >
@@ -71,12 +80,32 @@
               id="file"
               name="file"
             />
-            <label class="custom-file-label" for="file">Wybierz plik</label>
-          </div>
-          <div class="input-group-append">
-            <input type="submit" class="btn btn-primary" value="Upload" />
+            <label class="custom-file-label" for="file"
+              >Wgraj protokol odbiorczy</label
+            >
           </div>
         </div>
+        <input type="submit" class="btn btn-primary" value="Upload" />
+      </form>
+      <form
+        action="/protocol/upload/{{ protocol_id }}/delivery"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <div class="input-group">
+          <div class="custom-file">
+            <input
+              type="file"
+              class="custom-file-input"
+              id="file"
+              name="file"
+            />
+            <label class="custom-file-label" for="file"
+              >Wgraj protokol zdawczy</label
+            >
+          </div>
+        </div>
+        <input type="submit" class="btn btn-primary" value="Upload" />
       </form>
     </div>
   </body>

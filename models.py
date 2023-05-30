@@ -40,7 +40,8 @@ class Protocol(Base):
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     charger = Column(String(50))
     coment = Column(String(200))
-    scan = Column(LargeBinary)
+    scan_receiving = Column(LargeBinary)
+    scan_delivery = Column(LargeBinary)
     laptop = relationship("Laptop")
 
 
