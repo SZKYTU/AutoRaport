@@ -21,8 +21,6 @@ app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 def start():
     return render_template('index.html')
 
-
-
 @app.route('/laptop')
 def laptops():
     return render_template('laptops.html')

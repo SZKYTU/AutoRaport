@@ -10,14 +10,13 @@
     />
   </head>
   <body>
-    <h1>Protocol View for Protocol ID: {{ protocol_id }}</h1>
-    <table id="protocolTable" class="table">
-      <thead>
+    <h1 style="align-self: center">Protokół: {{ protocol_id }}</h1>
+    <table id="protocolTable" class="table table-striped text-center">
+      <thead class="thead-dark">
         <tr>
           <th>Company</th>
           <th>Model</th>
           <th>Serial Number</th>
-          <th>Status</th>
           <th>Last Name</th>
           <th>Date</th>
         </tr>
@@ -38,7 +37,6 @@
             <td>${protocol.laptop.company}</td>
             <td>${protocol.laptop.model}</td>
             <td>${protocol.laptop.serial_number}</td>
-            <td>${protocol.laptop.status}</td>
             <td>${protocol.protocol.last_name}</td>
             <td>${protocol.protocol.date}</td>
           `;
@@ -47,19 +45,39 @@
           console.error(xhr.statusText);
         }
       };
-      xhr.onerror = () => console.error(xhr.statusText);
       xhr.send();
     </script>
-    <button onclick="window.location.href = '/protocol/gen/{{protocol_id}}'">
-      Generate Protocol
-    </button>
-    <form
-      action="/protocol/upload/{{protocol_id}}"
-      method="post"
-      enctype="multipart/form-data"
-    >
-      <input type="file" name="file" />
-      <input type="submit" value="Upload" />
-    </form>
+
+    <div class="d-flex justify-content-center">
+      <button
+        class="btn btn-primary"
+        onclick="window.location.href = '/protocol/gen/{{protocol_id}}'"
+      >
+        Generuj protokol odbiorczy
+      </button>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <form
+        action="/protocol/upload/{{protocol_id}}"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <div class="input-group">
+          <div class="custom-file">
+            <input
+              type="file"
+              class="custom-file-input"
+              id="file"
+              name="file"
+            />
+            <label class="custom-file-label" for="file">Wybierz plik</label>
+          </div>
+          <div class="input-group-append">
+            <input type="submit" class="btn btn-primary" value="Upload" />
+          </div>
+        </div>
+      </form>
+    </div>
   </body>
 </html>
