@@ -11,11 +11,12 @@ server = os.getenv('DB_HOST')
 database = os.getenv('DB_NAME')
 uid = os.getenv('DB_USER')
 pwd = os.getenv('DB_PASS')
+port = os.getenv('DB_PORT')
 
 
 engine = create_engine(
-    # f'mssql+pymssql://{uid}:{pwd}@10.10.1.15:1433/{database}')
-    f'mssql+pymssql://{uid}:{pwd}@localhost:1433/{database}')
+    f'mssql+pymssql://{uid}:{pwd}@{server}:{port}/{database}')
+    # f'mssql+pymssql://{uid}:{pwd}@localhost:1433/{database}')
 Base = declarative_base()
 
 
@@ -49,6 +50,7 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
+    mmd_id = Column(Integer, nullable=False)
     name = Column(String(50), nullable=False)
     l_name = Column(String(50), nullable=False)
     domain_login = Column(String(50), nullable=False)

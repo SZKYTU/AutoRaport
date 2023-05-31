@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, abort, make_response
 from sqlalchemy.ext.declarative import declarative_base
 from models import Protocol, Laptop, engine, User
+from sqlalchemy import update
 from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 from sqlalchemy.orm import sessionmaker
@@ -74,7 +75,7 @@ def get_users():
 @app.route('/protocol/laptops', methods=['GET'])
 def get_laptops():
     company = request.args.get('company')
-    laptops = session.query(Laptop).filter_by(company=company).all()
+    laptops = session.query(Laptop).filter(Laptop.company == company, Laptop.status != 0).all()
     laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
                      'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status} for laptop in laptops]
     print(f"latopt {laptops_dict}")
@@ -103,6 +104,8 @@ def protoco_return():
 
     try:
         session.add(protocol)
+        print(data[1])
+        session.execute(update(Laptop).where(Laptop.id == data[1]).values(status=0))
         session.commit()
         return jsonify({'success': 'success'})
     except IntegrityError:
