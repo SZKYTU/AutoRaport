@@ -207,15 +207,17 @@ def protocol_download(protocol_id):
 # FIXME:
 @app.route('/protocol/gen/<int:protocol_id>/<string:type>', methods=['GET'])
 def gen_protocol(protocol_id, type):
+    protocol = session.query(Protocol).filter(Protocol.id == protocol_id).all()
+    print(protocol)
     if type == 'receiving':
-        response = generate_pdf("model_laptop", "serial_number",
-                                "pracownik", "receiving", protocol_id)
+        response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
+                                protocol.last_name, "receiving", protocol_id, protocol.charger)
     elif type == 'delivery':
-        response = generate_pdf("model_laptop", "serial_number",
-                                "pracownik", "delivery", protocol_id)
+        response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
+                                protocol.last_name, "delivery", protocol_id, protocol.charger)
     else:
         abort(400, "Invalid argument!")
-
+    session.close()
     return response
 
 
