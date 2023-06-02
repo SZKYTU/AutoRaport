@@ -45,7 +45,6 @@ class Protocol(Base):
     scan_delivery = Column(LargeBinary)
     laptop = relationship("Laptop")
 
-
 class User(Base):
     __tablename__ = 'users'
 
