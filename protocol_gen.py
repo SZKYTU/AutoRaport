@@ -24,8 +24,7 @@ def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_
 
         c = canvas.Canvas(pdf_name, pagesize=letter)
 
-        # Dodaj obsługę polskich znaków przez ustawienie odpowiedniej czcionki
-        font_path = "DejaVuSans.ttf"  # Ścieżka do pliku czcionki
+        font_path = "DejaVuSans.ttf"  
         pdfmetrics.registerFont(TTFont("DejaVuSans", font_path))
         c.setFont("DejaVuSans", 22)
 
