@@ -192,12 +192,16 @@ def allowed_file(filename):
 
 
 # FIXME:
-@app.route('/protocol/download/<int:protocol_id>', methods=['GET', 'POST'])
-def protocol_download(protocol_id):
-    protocol = session.query(Protocol).first()
+@app.route('/protocol/download/<int:protocol_id>/<string:type>', methods=['GET', 'POST'])
+def protocol_download(protocol_id, type):
+    protocol = session.query(Protocol).filter(Protocol.id == protocol_id).first()
     session.close()
-
-    response = make_response(protocol.scan)
+    if type == "receiving":
+        response = make_response(protocol.scan_receiving)
+    elif type == "delivery":
+        response = make_response(protocol.scan_delivery)
+    else:
+        abort(400, "Invalid argument!")
     response.headers[
         'Content-Disposition'] = f'attachment; filename=scan - {protocol.last_name}.pdf'
     response.headers['Content-Type'] = 'application/pdf'
