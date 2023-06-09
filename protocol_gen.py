@@ -9,7 +9,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 
-def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_status=1):
+def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_status):
     current_date = datetime.now().strftime("%d/%m/%y")
 
     if type == "receiving":
@@ -26,7 +26,7 @@ def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_
 
         font_path = "DejaVuSans.ttf"  
         pdfmetrics.registerFont(TTFont("DejaVuSans", font_path))
-        c.setFont("DejaVuSans", 22)
+        c.setFont("DejaVuSans", 25)
 
         c.drawCentredString(4.25 * inch, 10.5 * inch - 0.5 * inch, header)
 
@@ -42,7 +42,7 @@ def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_
         odbiorca_x = letter[0] - c.stringWidth("Odbierający:", "DejaVuSans", 13) - 1.5 * inch
         odbiorca_y = 1.5 * inch
 
-        c.drawString(wydajacy_x, wydajacy_y, "Przyjmujący:")
+        c.drawString(wydajacy_x, wydajacy_y, "Zdający:")
         c.drawString(odbiorca_x, odbiorca_y, "Odbierający:")
 
         c.setDash(1, 2)
@@ -52,7 +52,7 @@ def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_
         date_line_y = 10.5 * inch - 3 * inch
         c.line(1 * inch, date_line_y, letter[0] - 1 * inch, date_line_y)
 
-        if charger_status == 1:
+        if charger_status == "1":
             c.setFont("DejaVuSans", 13)
             c.drawString(1 * inch, date_line_y - 0.5 * inch, "*ładowarka")
 

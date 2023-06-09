@@ -75,7 +75,7 @@ def get_users():
 @app.route('/protocol/laptops', methods=['GET'])
 def get_laptops():
     company = request.args.get('company')
-    laptops = session.query(Laptop).filter(Laptop.company == company).all()
+    laptops = session.query(Laptop).filter(Laptop.company == company, Laptop.status == 'New').all()
     laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
                      'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status} for laptop in laptops]
     print(f"latopt {laptops_dict}")
@@ -212,7 +212,6 @@ def protocol_download(protocol_id, type):
 def gen_protocol(protocol_id, type):
     protocol = session.query(Protocol).filter(Protocol.id == protocol_id).first()
     name = session.query(User.name).filter(User.id == protocol.user_id).first() # ...
-    print(protocol)
     if type == 'receiving':
         response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
                                 protocol.last_name +" "+ name.name, "receiving", protocol_id, protocol.charger)
