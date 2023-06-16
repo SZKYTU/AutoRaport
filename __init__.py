@@ -10,6 +10,7 @@ from datetime import datetime
 
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -122,7 +123,8 @@ def get_protocols():
             'id': protocol.id,
             'last_name': protocol.last_name,
             'date': protocol.date.strftime('%d/%m/%Y'),
-            'coment': protocol.coment
+            'coment': protocol.coment,
+            'test': 'ćuł'
         }
         results.append(result)
     return jsonify(results)
