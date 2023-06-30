@@ -85,7 +85,7 @@ company.addEventListener("change", (event) => {
         idCell.textContent = laptop.id;
         serialNumberCell.textContent = laptop.serial_number;
         modelCell.textContent = laptop.model;
-        commentCell.textContent = laptop.comment;
+        commentCell.textContent = laptop.coment;
         companyCell.textContent = laptop.company;
         statusCell.textContent = laptop.status;
 
@@ -118,6 +118,9 @@ generateButton.addEventListener("click", function () {
     body: JSON.stringify(devices),
   })
     .then((response) => response.json())
-    .then((devices) => console.log(devices))
+    .then((devices) => {
+      console.log(devices);
+      alert("Entry generated successfully!");
+    })
     .catch((error) => console.error(error));
 });

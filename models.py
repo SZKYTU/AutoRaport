@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, LargeBinary
 from sqlalchemy.orm import declarative_base
-from sqlalchemy.sql.expression import text
 from sqlalchemy.orm import relationship
 from dotenv import load_dotenv
 import os

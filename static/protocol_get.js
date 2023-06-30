@@ -13,7 +13,7 @@ fetch("/protocols/show")
         <td><a href="/protocol/view/${protocol.id}">${protocol.id}</a></td>
         <td>${protocol.last_name}</td>
         <td>${protocol.date}</td>
-        <td>${protocol.comment}</td>
+        <td>${protocol.coment}</td>
       `;
       tableBody.appendChild(row);
     });

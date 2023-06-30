@@ -123,8 +123,7 @@ def get_protocols():
             'id': protocol.id,
             'last_name': protocol.last_name,
             'date': protocol.date.strftime('%d/%m/%Y'),
-            'coment': protocol.coment,
-            'test': 'ćuł'
+            'coment': protocol.coment
         }
         results.append(result)
     return jsonify(results)
