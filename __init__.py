@@ -116,7 +116,7 @@ def protoco_return():
 
 @app.route('/protocols/show', methods=['GET'])
 def get_protocols():
-    protocols = session.query(Protocol).all()
+    protocols = session.query(Protocol).order_by(Protocol.date.desc()).all()
     results = []
     for protocol in protocols:
         result = {
