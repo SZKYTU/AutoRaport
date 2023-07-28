@@ -79,6 +79,17 @@
         Generuj protokół zdawczy
       </button>
     </div>
+    <div style="text-align: center; margin-top: 10px">
+  <button
+    class="btn btn-primary"
+    onclick="showModalWithOptions('{{ protocol_id }}')"
+  >
+    Podglad protokołów
+  </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ url_for('static', filename='protocol_options_alert.js') }}"></script>
 
     <div class="container">
   <div class="upload-form">
