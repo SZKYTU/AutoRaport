@@ -60,6 +60,11 @@ def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_
         c.setFont("DejaVuSans", 10)
         c.drawCentredString(4.25 * inch, 0.5 * inch, "Sprzęt pozostaje własnością TelForceOne S.A")
 
+        right_bottom_x = letter[0] - 0.1 * inch
+        right_bottom_y = 0.1 * inch
+        c.drawRightString(right_bottom_x, right_bottom_y, f"{protocolid}")
+
+
         c.showPage()
         c.save()
 
