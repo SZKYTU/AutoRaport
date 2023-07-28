@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <title>Protocol View</title>
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"
-      integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA=="
-      crossorigin="anonymous"
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"
+    integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA=="
+    crossorigin="anonymous"
     />
     <style>
       .container {
@@ -21,7 +21,8 @@
       .upload-form {
         margin-top: 10px;
       }
-    </style>
+      </style>
+      <script src="{{ url_for('static', filename='protocol_form.js') }}"></script>
   </head>
   <body>
     <h1 style="text-align: center">Protokół nr. {{ protocol_id }}</h1>
@@ -39,27 +40,7 @@
     </table>
 
     <script>
-      const protocol_id = {{ protocol_id }};
-      const xhr = new XMLHttpRequest();
-      xhr.open("GET", `/protocol/${protocol_id}`);
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          const protocol = JSON.parse(xhr.responseText);
-          const tableBody = document.querySelector("#protocolTable tbody");
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${protocol.laptop.company}</td>
-            <td>${protocol.laptop.model}</td>
-            <td>${protocol.laptop.serial_number}</td>
-            <td>${protocol.protocol.last_name}</td>
-            <td>${protocol.protocol.date}</td>
-          `;
-          tableBody.appendChild(row);
-        } else {
-          console.error(xhr.statusText);
-        }
-      };
-      xhr.send();
+     protocolTable('{{ protocol_id }}')
     </script>
 
     <div style="text-align: center">
@@ -79,17 +60,17 @@
         Generuj protokół zdawczy
       </button>
     </div>
+
     <div style="text-align: center; margin-top: 10px">
-  <button
-    class="btn btn-primary"
-    onclick="showModalWithOptions('{{ protocol_id }}')"
-  >
-    Podglad protokołów
-  </button>
-</div>
+        <button
+          class="btn btn-primary"
+          onclick="showModalWithOptions('{{ protocol_id }}')"
+        >
+          Podglad protokołów
+        </button>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ url_for('static', filename='protocol_options_alert.js') }}"></script>
 
     <div class="container">
   <div class="upload-form">
