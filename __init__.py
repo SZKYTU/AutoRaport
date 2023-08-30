@@ -76,7 +76,8 @@ def get_users():
 @app.route('/protocol/laptops', methods=['GET'])
 def get_laptops():
     company = request.args.get('company')
-    laptops = session.query(Laptop).filter(Laptop.company == company, Laptop.status == 'New').all()
+    laptops = session.query(Laptop).filter(
+        Laptop.company == company, Laptop.status == 'New').all()
     laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
                      'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status} for laptop in laptops]
     print(f"latopt {laptops_dict}")
@@ -106,7 +107,8 @@ def protoco_return():
     try:
         session.add(protocol)
         print(data[1])
-        session.execute(update(Laptop).where(Laptop.id == data[1]).values(status=0))
+        session.execute(update(Laptop).where(
+            Laptop.id == data[1]).values(status=0))
         session.commit()
         return jsonify({'success': 'success'})
     except IntegrityError:
@@ -123,7 +125,8 @@ def get_protocols():
             'id': protocol.id,
             'last_name': protocol.last_name,
             'date': protocol.date.strftime('%d/%m/%Y'),
-            'coment': protocol.coment
+            'delivery_status': protocol.delivery_status,
+            'receiving_status': protocol.receiving_status
         }
         results.append(result)
     return jsonify(results)
@@ -195,7 +198,8 @@ def allowed_file(filename):
 # FIXME:
 @app.route('/protocol/download/<int:protocol_id>/<string:type>', methods=['GET', 'POST'])
 def protocol_download(protocol_id, type):
-    protocol = session.query(Protocol).filter(Protocol.id == protocol_id).first()
+    protocol = session.query(Protocol).filter(
+        Protocol.id == protocol_id).first()
     session.close()
     if type == "receiving":
         response = make_response(protocol.scan_receiving)
@@ -211,15 +215,17 @@ def protocol_download(protocol_id, type):
 
 @app.route('/protocol/gen/<int:protocol_id>/<string:type>', methods=['GET'])
 def gen_protocol(protocol_id, type):
-    protocol = session.query(Protocol).filter(Protocol.id == protocol_id).first()
-    name = session.query(User.name).filter(User.id == protocol.user_id).first() # ...
+    protocol = session.query(Protocol).filter(
+        Protocol.id == protocol_id).first()
+    # ...
+    name = session.query(User.name).filter(User.id == protocol.user_id).first()
     if type == 'receiving':
         response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
-                                protocol.last_name +" "+ name.name, "receiving", protocol_id, protocol.charger)
+                                protocol.last_name + " " + name.name, "receiving", protocol_id, protocol.charger)
         print()
     elif type == 'delivery':
         response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
-                                protocol.last_name +" "+ name.name, "delivery", protocol_id, protocol.charger)
+                                protocol.last_name + " " + name.name, "delivery", protocol_id, protocol.charger)
 
     else:
         abort(400, "Invalid argument!")
@@ -228,4 +234,4 @@ def gen_protocol(protocol_id, type):
 
 
 if __name__ == '__main__':
-    app.run(port=5000, host="0.0.0.0")
+    app.run(port=5001, host="0.0.0.0")
