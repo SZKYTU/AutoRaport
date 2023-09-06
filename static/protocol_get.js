@@ -14,13 +14,16 @@ fetch("/protocols/show")
   .then((protocols) => {
     const tableBody = document.querySelector("#protocolsTable tbody");
     protocols.forEach((protocol) => {
+      const deliveryStatus = parseInt(protocol.delivery_status);
+      const receivingStatus = parseInt(protocol.receiving_status);
+
       const row = document.createElement("tr");
       row.innerHTML = `
         <td><a href="/protocol/view/${protocol.id}">${protocol.id}</a></td>
         <td>${protocol.last_name}</td>
         <td>${protocol.date}</td>
-        <td>${protocol.delivery_status ? up_arrow : down_arrow}</td>
-        <td>${protocol.receiving_status ? up_arrow : down_arrow}</td> // :TODO
+        <td>${deliveryStatus ? up_arrow : down_arrow}</td>
+        <td>${receivingStatus ? up_arrow : down_arrow}</td> // :TODO
       `;
       tableBody.appendChild(row);
     });
