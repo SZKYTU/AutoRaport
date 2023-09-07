@@ -1,4 +1,21 @@
 const showModalWithOptions = (id) => {
+  const url = `/protocol/status/${id}`;
+
+  fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const receivingStatus = data[0].receiving_status;
+      const deliveryStatus = data[0].delivery_status;
+    })
+    .catch((error) => {
+      console.error("Błąd:", error);
+    });
+
   const options = {
     title: "Podgląd protokołów",
     confirmButtonText: "Pobierz protokół odbiorczy",

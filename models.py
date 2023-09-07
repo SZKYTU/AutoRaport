@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, LargeBinary
+from sqlalchemy import create_engine, Column,Boolean, Integer, String, ForeignKey, DateTime, LargeBinary
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 from dotenv import load_dotenv
@@ -42,6 +42,8 @@ class Protocol(Base):
     coment = Column(String(200))
     scan_receiving = Column(LargeBinary)
     scan_delivery = Column(LargeBinary)
+    receiving_status = Column(Boolean)
+    delivery_status = Column(Boolean)
     laptop = relationship("Laptop")
 
 class User(Base):
