@@ -1,28 +1,49 @@
 const showModalWithOptions = (id) => {
   const url = `/protocol/status/${id}`;
 
-  fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const receivingStatus = data[0].receiving_status;
-      const deliveryStatus = data[0].delivery_status;
-    })
-    .catch((error) => {
-      console.error("Błąd:", error);
-    });
+  let receivingStatus;
+  let deliveryStatus;
+
+  function fetchDataAndReturnArray(url) {
+    return fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const receivingStatus = data[0].receiving_status;
+        const deliveryStatus = data[0].delivery_status;
+        return [receivingStatus, deliveryStatus];
+      })
+      .catch((error) => {
+        console.error("Błąd:", error);
+        throw error;
+      });
+  }
+
+  const test = fetchDataAndReturnArray(url).then((resultArray) => {
+    receivingStatus = resultArray[0];
+    deliveryStatus = resultArray[1];
+    return receivingStatus, deliveryStatus;
+  });
+  console.log(test);
+
+  // const focusDenyValue = false;
 
   const options = {
+    showDenyButton: true,
+    showConfirmButton: true,
     title: "Podgląd protokołów",
     confirmButtonText: "Pobierz protokół odbiorczy",
-    showDenyButton: true,
     denyButtonText: "Pobierz protokół zdawczy",
-    focusDeny: true,
   };
+
+  options.showDenyButton = deliveryStatus;
+  console.log(test.deliveryStatus);
+  options.showConfirmButton = receivingStatus;
+  console.log(receivingStatus);
 
   Swal.fire(options).then((result) => {
     if (result.isConfirmed) {
