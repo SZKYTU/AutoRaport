@@ -83,10 +83,16 @@ def get_laptops():
     print(f"latopt {laptops_dict}")
     return jsonify(laptops_dict)
 
+
 @app.route('/protocol/status/<int:protocol_id>', methods=['GET'])
 def get_protocol_status(protocol_id):
-    protocol_status = session.query(Protocol.receiving_status, Protocol.delivery_status).filter(Protocol.id == protocol_id).first()
-    status_dict = [{'id': protocol_id, 'receiving_status': protocol_status[0], 'delivery_status': protocol_status[1]}]
+    protocol_status = session.query(Protocol.receiving_status, Protocol.delivery_status).filter(
+        Protocol.id == protocol_id).first()
+    status_dict = {
+        'id': protocol_id,
+        'receiving_status': protocol_status[0],
+        'delivery_status': protocol_status[1]
+    }
     return jsonify(status_dict)
 
 

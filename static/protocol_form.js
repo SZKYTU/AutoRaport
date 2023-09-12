@@ -1,36 +1,27 @@
 const showModalWithOptions = (id) => {
   const url = `/protocol/status/${id}`;
+  const resultList = [];
 
-  let receivingStatus;
-  let deliveryStatus;
+  const test = fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (data.hasOwnProperty("delivery_status")) {
+        resultList.push(data.delivery_status);
+      }
+      if (data.hasOwnProperty("receiving_status")) {
+        resultList.push(data.receiving_status);
+      }
 
-  function fetchDataAndReturnArray(url) {
-    return fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const receivingStatus = data[0].receiving_status;
-        const deliveryStatus = data[0].delivery_status;
-        return [receivingStatus, deliveryStatus];
-      })
-      .catch((error) => {
-        console.error("Błąd:", error);
-        throw error;
-      });
-  }
-
-  const test = fetchDataAndReturnArray(url).then((resultArray) => {
-    receivingStatus = resultArray[0];
-    deliveryStatus = resultArray[1];
-    return receivingStatus, deliveryStatus;
-  });
-  console.log(test);
-
-  // const focusDenyValue = false;
+      console.log(resultList);
+    })
+    .catch((error) => {
+      console.error("Błąd podczas pobierania danych:", error);
+    });
 
   const options = {
     showDenyButton: true,
@@ -40,10 +31,9 @@ const showModalWithOptions = (id) => {
     denyButtonText: "Pobierz protokół zdawczy",
   };
 
-  options.showDenyButton = deliveryStatus;
-  console.log(test.deliveryStatus);
-  options.showConfirmButton = receivingStatus;
-  console.log(receivingStatus);
+  options.showConfirmButton = resultList[1];
+  console.log(test);
+  options.showDenyButton = resultList[0];
 
   Swal.fire(options).then((result) => {
     if (result.isConfirmed) {
