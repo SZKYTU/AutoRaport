@@ -1,8 +1,7 @@
 const showModalWithOptions = (id) => {
   const url = `/protocol/status/${id}`;
-  const resultList = [];
-
-  const test = fetch(url)
+  let resultList = [];
+  fetch(url)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.status}`);
@@ -16,12 +15,17 @@ const showModalWithOptions = (id) => {
       if (data.hasOwnProperty("receiving_status")) {
         resultList.push(data.receiving_status);
       }
-
-      console.log(resultList);
-    })
-    .catch((error) => {
-      console.error("Błąd podczas pobierania danych:", error);
     });
+
+  console.log(resultList.length);
+  console.log(resultList);
+  console.log(resultList[0]);
+  console.log(resultList.length);
+  // fetch(url).then((resultList) => {
+  //   resultData = resultList;
+  //   console.log(resultData);
+  //   console.log(resultData[0]);
+  // });
 
   const options = {
     showDenyButton: true,
@@ -30,10 +34,6 @@ const showModalWithOptions = (id) => {
     confirmButtonText: "Pobierz protokół odbiorczy",
     denyButtonText: "Pobierz protokół zdawczy",
   };
-
-  options.showConfirmButton = resultList[1];
-  console.log(test);
-  options.showDenyButton = resultList[0];
 
   Swal.fire(options).then((result) => {
     if (result.isConfirmed) {
