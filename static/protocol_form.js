@@ -1,7 +1,8 @@
-const showModalWithOptions = (id) => {
+const showModalWithOptions = async (id) => {
   const url = `/protocol/status/${id}`;
-  let resultList = [];
-  fetch(url)
+  const resultList = [];
+
+  await fetch(url)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.status}`);
@@ -17,19 +18,9 @@ const showModalWithOptions = (id) => {
       }
     });
 
-  console.log(resultList.length);
-  console.log(resultList);
-  console.log(resultList[0]);
-  console.log(resultList.length);
-  // fetch(url).then((resultList) => {
-  //   resultData = resultList;
-  //   console.log(resultData);
-  //   console.log(resultData[0]);
-  // });
-
   const options = {
-    showDenyButton: true,
-    showConfirmButton: true,
+    showDenyButton: resultList[0],
+    showConfirmButton: resultList[1],
     title: "Podgląd protokołów",
     confirmButtonText: "Pobierz protokół odbiorczy",
     denyButtonText: "Pobierz protokół zdawczy",

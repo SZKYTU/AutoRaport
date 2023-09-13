@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column,Boolean, Integer, String, ForeignKey, DateTime, LargeBinary
+from sqlalchemy import create_engine, Column, Boolean, Integer, String, ForeignKey, DateTime, LargeBinary
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 from dotenv import load_dotenv
@@ -14,8 +14,8 @@ port = os.getenv('DB_PORT')
 
 
 engine = create_engine(
-    f'mssql+pymssql://{uid}:{pwd}@{server}:{port}/{database}?charset=utf8')
-    # f'mssql+pymssql://{uid}:{pwd}@localhost:1433/{database}')
+    # f'mssql+pymssql://{uid}:{pwd}@{server}:{port}/{database}?charset=utf8')
+    f'mssql+pymssql://{uid}:{pwd}@localhost:1433/{database}')
 Base = declarative_base()
 
 
@@ -45,6 +45,7 @@ class Protocol(Base):
     receiving_status = Column(Boolean)
     delivery_status = Column(Boolean)
     laptop = relationship("Laptop")
+
 
 class User(Base):
     __tablename__ = 'users'
