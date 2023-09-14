@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, jsonify, abort, make_response
-from sqlalchemy.ext.declarative import declarative_base
-from models import Protocol, Laptop, engine, User
+from datetime import datetime
 from sqlalchemy import update
+from unidecode import unidecode
+from protocol_gen import generate_pdf
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
-from sqlalchemy.orm import sessionmaker
-from protocol_gen import generate_pdf
-from datetime import datetime
+from models import Protocol, Laptop, engine, User
+from sqlalchemy.ext.declarative import declarative_base
+from flask import Flask, render_template, request, jsonify, abort, make_response
 
 
 app = Flask(__name__)
@@ -221,8 +222,10 @@ def protocol_download(protocol_id, type):
         response = make_response(protocol.scan_delivery)
     else:
         abort(400, "Invalid argument!")
+
+    file_name = unidecode(protocol.last_name)
     response.headers[
-        'Content-Disposition'] = f'attachment; filename=scan - {protocol.last_name}.pdf'
+        'Content-Disposition'] = f'attachment; filename=scan - {file_name}.pdf'
     response.headers['Content-Type'] = 'application/pdf'
     return response
 

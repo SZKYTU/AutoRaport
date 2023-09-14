@@ -1,11 +1,12 @@
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.colors import gray
-from flask import send_file, make_response
-from reportlab.lib.units import inch
-from datetime import datetime
 import tempfile
+from datetime import datetime
+from unidecode import unidecode
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.colors import gray
 from reportlab.pdfbase import pdfmetrics
+from reportlab.lib.pagesizes import letter
+from flask import send_file, make_response
 from reportlab.pdfbase.ttfonts import TTFont
 
 
@@ -77,7 +78,8 @@ def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_
         c.showPage()
         c.save()
 
+    worker = unidecode(worker)
     response = make_response(send_file(pdf_name, as_attachment=True))
     response.headers[
-        "Content-Disposition"] = f"attachment; filename=Protokol_{protocol_status}_{worker}_(ID {protocolid}).pdf"
+        "Content-Disposition"] = f"attachment; filename=Protokol_{protocol_status}_{worker}_{protocolid}.pdf"
     return response
