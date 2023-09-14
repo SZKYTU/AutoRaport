@@ -236,7 +236,6 @@ def gen_protocol(protocol_id, type):
     if type == 'receiving':
         response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
                                 protocol.last_name + " " + name.name, "receiving", protocol_id, protocol.charger)
-        print()
     elif type == 'delivery':
         response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
                                 protocol.last_name + " " + name.name, "delivery", protocol_id, protocol.charger)
