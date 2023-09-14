@@ -14,8 +14,8 @@ port = os.getenv('DB_PORT')
 
 
 engine = create_engine(
-    # f'mssql+pymssql://{uid}:{pwd}@{server}:{port}/{database}?charset=utf8')
-    f'mssql+pymssql://{uid}:{pwd}@localhost:1433/{database}')
+    f'mssql+pymssql://{uid}:{pwd}@{server}:{port}/{database}?charset=utf8')
+# f'mssql+pymssql://{uid}:{pwd}@localhost:1433/{database}')
 Base = declarative_base()
 
 

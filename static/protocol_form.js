@@ -26,6 +26,10 @@ const showModalWithOptions = async (id) => {
     denyButtonText: "Pobierz protokół zdawczy",
   };
 
+  if ((resultList[0] == false) & (resultList[0] == false)) {
+    options.title = "Nie ma protokołów do wyświetlenia";
+  }
+
   Swal.fire(options).then((result) => {
     if (result.isConfirmed) {
       window.location.href = `/protocol/download/${id}/receiving`;
