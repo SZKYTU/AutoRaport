@@ -26,7 +26,7 @@ const showModalWithOptions = async (id) => {
     denyButtonText: "Pobierz protokół zdawczy",
   };
 
-  if ((resultList[0] == false) & (resultList[0] == false)) {
+  if (resultList[0] == false && resultList[0] == false) {
     options.title = "Nie ma protokołów do wyświetlenia";
   }
 
