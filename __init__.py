@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask, render_template, request, jsonify, abort, make_response
-
+from laptop_restore import LaptopOperation
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -174,8 +174,8 @@ def get_protocol(protocol_id):
 # TODO:
 
 
-@app.route('/protocol/upload/<int:protocol_id>/<string:type>', methods=['GET', 'POST'])
-def protocol_upload(protocol_id, type):
+@app.route('/protocol/upload/<int:protocol_id>/<string:type>/<int:restore>', methods=['GET', 'POST'])
+def protocol_upload(protocol_id, type, restore):
     file = request.files['file']
 
     if file and allowed_file(file.filename):
@@ -193,6 +193,7 @@ def protocol_upload(protocol_id, type):
                     protocol.scan_receiving = file_data
                     protocol.receiving_status = 1
                 elif type == 'delivery':
+                    LaptopOperation.restore(protocol_id, restore)
                     protocol.scan_delivery = file_data
                     protocol.delivery_status = 1
                 else:
@@ -211,6 +212,8 @@ def allowed_file(filename):
 
 
 # FIXME:
+
+
 @app.route('/protocol/download/<int:protocol_id>/<string:type>', methods=['GET', 'POST'])
 def protocol_download(protocol_id, type):
     protocol = session.query(Protocol).filter(
@@ -250,4 +253,4 @@ def gen_protocol(protocol_id, type):
 
 
 if __name__ == '__main__':
-    app.run(port=5000, host="0.0.0.0")
+    app.run(port=5001, host="0.0.0.0")
