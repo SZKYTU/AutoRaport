@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import update
+from sqlalchemy import update, select, literal_column, and_, exists
 from unidecode import unidecode
 from protocol_gen import generate_pdf
 from sqlalchemy.orm import sessionmaker
@@ -46,7 +46,7 @@ def get_protocol_view(protocol_id):
 
 
 # API servis
-@app.route('/laptops/add', methods=['POST'])
+@app.route('/laptops/add', methods=['POST'])  # ::TODO
 def add_laptop():
     data = request.get_json()
 
@@ -58,10 +58,17 @@ def add_laptop():
         status=data['status']
     )
     session = Session()
-    session.add(laptop)
-    session.commit()
+    result = session.query(Laptop).filter(
+        and_(Laptop.serial_number == laptop.serial_number, Laptop.company == laptop.company)).all()
 
-    return jsonify({'success': True, 'message': 'Equipment added successfully!'})
+    if len(result) > 0:
+        print("true")
+        return jsonify({'success': False, 'message': 'laptopExist'})
+    else:
+        session.add(laptop)
+        session.commit()
+        return jsonify({'success': True, 'message': 'success'})
+        print('TEST')
 
 
 @app.route('/protocol/users', methods=['GET'])

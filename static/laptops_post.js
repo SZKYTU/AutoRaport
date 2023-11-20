@@ -28,8 +28,17 @@ form.addEventListener("submit", (event) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log("Success:", data);
-      alert("Equipment added successfully!");
+      if (data.message === "success") {
+        console.log("Success:", data);
+        alert("Equipment added successfully!");
+      } else if (data.message === "laptopExist") {
+        console.log("Laptop already exists:", data);
+        Swal.fire({
+          icon: "info",
+          title: "Laptop already exists!",
+          text: "Equipment already exists in the database and is available.",
+        });
+      }
     })
     .catch((error) => {
       console.error("Error:", error);
