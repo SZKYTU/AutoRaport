@@ -46,7 +46,7 @@ def get_protocol_view(protocol_id):
 
 
 # API servis
-@app.route('/laptops/add', methods=['POST'])  # ::TODO
+@app.route('/laptops/add', methods=['POST'])
 def add_laptop():
     data = request.get_json()
 
@@ -68,7 +68,6 @@ def add_laptop():
         session.add(laptop)
         session.commit()
         return jsonify({'success': True, 'message': 'success'})
-        print('TEST')
 
 
 @app.route('/protocol/users', methods=['GET'])
