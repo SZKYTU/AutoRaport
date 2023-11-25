@@ -66,6 +66,12 @@ def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_
             c.setFont("DejaVuSans", 13)
             c.drawString(1 * inch, date_line_y - 0.5 * inch, "*ładowarka")
 
+        c.setFont("DejaVuSans", 13)
+        c.drawString(1 * inch, date_line_y - 0.8 * inch, "*mysz")
+
+        c.setFont("DejaVuSans", 13)
+        c.drawString(1 * inch, date_line_y - 1.1 * inch, "*klawiatura")
+
         c.setFillColor(gray)
         c.setFont("DejaVuSans", 10)
         c.drawCentredString(4.25 * inch, 0.5 * inch,
