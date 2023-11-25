@@ -58,8 +58,9 @@ def add_laptop():
         status=data['status']
     )
     session = Session()
+
     result = session.query(Laptop).filter(
-        and_(Laptop.serial_number == laptop.serial_number, Laptop.company == laptop.company)).all()
+        and_(Laptop.serial_number == laptop.serial_number, Laptop.company == laptop.company, Laptop.status == 'New')).all()
 
     if len(result) > 0:
         print("true")
