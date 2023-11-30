@@ -108,7 +108,14 @@ company.addEventListener("change", (event) => {
 generateButton.addEventListener("click", function () {
   const chargerCheckbox = document.getElementById("charger");
   const chargerStatus = chargerCheckbox.checked ? 1 : 0;
-  devices.push(chargerStatus);
+
+  const mouse_keyboard_statusCheckbox = document.getElementById(
+    "mouse_keyboard_status"
+  );
+  const mouse_keyboard_status = mouse_keyboard_statusCheckbox.checked ? 1 : 0;
+
+  console.log(chargerStatus, mouse_keyboard_status);
+  devices.push(chargerStatus, mouse_keyboard_status);
 
   fetch("/protocol/return", {
     method: "POST",

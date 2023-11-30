@@ -107,10 +107,10 @@ def get_protocol_status(protocol_id):
 @app.route('/protocol/return', methods=['POST'])
 def protoco_return():
     data = request.get_json()
-    # data == [user.id, laptop.id, chargerStatus] ...carbonara
+    # data == [user.id, laptop.id, chargerStatus, mouse_keyboard_status] ...carbonara
     if not data:
         return jsonify({'error': 'response error'}), 400
-    if len(data) != 3:
+    if len(data) != 4:
         return jsonify({'error': 'response error (array)'}), 400
 
     user = session.query(User).get(data[0])
@@ -120,15 +120,17 @@ def protoco_return():
                         laptop_id=data[1],
                         user_id=data[0],
                         charger=data[2],
+                        mouse_keyboard_status=data[3],
                         coment='No comments',
                         scan_receiving=b'None',
                         scan_delivery=b'None')
 
     try:
         session.add(protocol)
-        print(data[1])
+
         session.execute(update(Laptop).where(
             Laptop.id == data[1]).values(status=0))
+
         session.commit()
         return jsonify({'success': 'success'})
     except IntegrityError:
