@@ -30,13 +30,12 @@ form.addEventListener("submit", (event) => {
     .then((data) => {
       if (data.message === "success") {
         console.log("Success:", data);
-        alert("Equipment added successfully!");
+        alert("Sprzęt dodany poprawnie!");
       } else if (data.message === "laptopExist") {
-        console.log("Laptop already exists:", data);
+        console.log("Sprzęt juz istnieje:", data);
         Swal.fire({
           icon: "info",
-          title: "Laptop already exists!",
-          text: "Equipment already exists in the database and is available.",
+          title: "Sprzęt juz istnieje:",
         });
       }
     })

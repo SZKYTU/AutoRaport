@@ -127,7 +127,8 @@ generateButton.addEventListener("click", function () {
     .then((response) => response.json())
     .then((devices) => {
       console.log(devices);
-      alert("Entry generated successfully!");
+      alert("Wpis dodany poprawnie!");
+      location.reload();
     })
     .catch((error) => console.error(error));
 });

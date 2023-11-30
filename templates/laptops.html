@@ -27,11 +27,11 @@
           >Lista protokołów &#x1F4DA;</a
         >
       </nav>
-      <h1 class="text-center">Add Laptop</h1>
+      <h1 class="text-center">Dodawanie Sprzętu</h1>
 
       <form>
         <div class="mb-3">
-          <label class="form-label" for="serial_number">Serial Number:</label>
+          <label class="form-label" for="serial_number">Numer Seryjnyr:</label>
           <input
             type="text"
             id="serial_number"
@@ -55,7 +55,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="comment">Comment:</label>
+          <label class="form-label" for="comment">Komentarz:</label>
           <input
             type="text"
             id="coment"
@@ -66,7 +66,7 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="company">Company:</label>
+          <label class="form-label" for="company">Spółka/Firma:</label>
           <select id="company" name="company" class="form-select">
             <option value="None">None</option>
             <option value="TelForceOne">TelForceOne</option>
@@ -80,13 +80,15 @@
         <div class="mb-3">
           <label class="form-label" for="status">Status:</label>
           <select id="status" name="status" class="form-select">
-            <option value="New">New</option>
-            <option value="Used">Used</option>
+            <option value="New">Nowy</option>
+            <option value="Used">Uszkodzony</option>
           </select>
         </div>
 
         <div class="text-center">
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary">
+            Zatwierdz Sprzet
+          </button>
         </div>
       </form>
 
