@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.ext.declarative import declarative_base
-from flask import Flask, render_template, request, jsonify, abort, make_response
+from flask import Flask, render_template, request, jsonify, abort, make_response,redirect,url_for
 from laptop_restore import LaptopOperation
 
 app = Flask(__name__)
@@ -20,6 +20,12 @@ app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
 
 # Page servis
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return redirect(url_for('start'))
+
+
 @app.route('/start')
 def start():
     return render_template('index.html')
