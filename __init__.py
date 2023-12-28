@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.ext.declarative import declarative_base
-from flask import Flask, render_template, request, jsonify, abort, make_response,redirect,url_for
+from flask import Flask, render_template, request, jsonify, abort, make_response, redirect, url_for
 from laptop_restore import LaptopOperation
 
 app = Flask(__name__)
@@ -29,6 +29,11 @@ def page_not_found(error):
 @app.route('/start')
 def start():
     return render_template('index.html')
+
+
+@app.route('/test')
+def test():
+    return render_template('laptop_list_form.html')
 
 
 @app.route('/laptop')
