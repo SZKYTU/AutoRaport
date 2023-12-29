@@ -9,6 +9,7 @@ from models import Protocol, Laptop, engine, User
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask, render_template, request, jsonify, abort, make_response, redirect, url_for
 from laptop_restore import LaptopOperation
+from laptop_list_module import LaptopList
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -31,10 +32,9 @@ def start():
     return render_template('index.html')
 
 
-@app.route('/test')
-def test():
+@app.route('/laptops/list')
+def laptop_list():
     return render_template('laptop_list_form.html')
-
 
 @app.route('/laptop')
 def laptops():
@@ -57,6 +57,13 @@ def get_protocol_view(protocol_id):
 
 
 # API servis
+
+@app.route('/laptops/list/get', methods=['GET'])
+def get_laptop_list(): 
+    laptop_dict = LaptopList.get_laptop_list()
+    return jsonify(laptop_dict)
+
+
 @app.route('/laptops/add', methods=['POST'])
 def add_laptop():
     data = request.get_json()
@@ -99,7 +106,7 @@ def get_laptops():
         Laptop.company == company, Laptop.status == 'New').all()
     laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
                      'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status} for laptop in laptops]
-    print(f"latopt {laptops_dict}")
+    print(f"laptop {laptops_dict}")
     return jsonify(laptops_dict)
 
 
