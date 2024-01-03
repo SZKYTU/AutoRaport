@@ -14,7 +14,8 @@ class LaptopList:
             laptop_query = session.query(Laptop).all()
         elif status == False:
             laptop_query = session.query(Laptop).filter(Laptop.status == 'New').all()
-        
+        else:
+            return 'Invalid status'
 
         laptop_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model, 'company': laptop.company, 'status': laptop.status} for laptop in laptop_query]
 
