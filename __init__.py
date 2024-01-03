@@ -36,6 +36,12 @@ def start():
 def laptop_list():
     return render_template('laptop_list_form.html')
 
+
+@app.route('/laptop/panel/<int:laptop_id>')
+def laptop_panel(laptop_id):
+    return f'{laptop_id}'
+
+
 @app.route('/laptop')
 def laptops():
     return render_template('laptops.html')
@@ -58,9 +64,9 @@ def get_protocol_view(protocol_id):
 
 # API servis
 
-@app.route('/laptops/list/get', methods=['GET'])
-def get_laptop_list(): 
-    laptop_dict = LaptopList.get_laptop_list()
+@app.route('/laptops/list/get/<int:status>', methods=['GET'])
+def get_laptop_list(status): 
+    laptop_dict = LaptopList.get_laptop_list(status)
     return jsonify(laptop_dict)
 
 
