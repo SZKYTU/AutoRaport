@@ -1,31 +1,14 @@
 // lisining for click event on the button
-document.querySelectorAll(".dropdown-item").forEach((item) => {
-  item.addEventListener("click", function () {
-    const selectedValue = this.getAttribute("data-value");
-    updateTable(selectedValue);
-    console.log("Selected value:", selectedValue);
-  });
-});
+document.getElementById("select").addEventListener("change", updateTable);
 
 document
   .getElementById("flexSwitchCheckDefault")
-  .addEventListener("change", function () {
-    if (this.checked) {
-      console.log("Switch is checked");
-    } else {
-      console.log("Switch is unchecked");
-    }
-  });
+  .addEventListener("change", updateTable);
 
 //API connection
-function getLaptops() {
-  let api_get = "";
+const getLaptops = (showall) => {
+  const api_get = `/laptops/list/get/${showall ? 1 : 0}`;
 
-  if (document.getElementById("flexSwitchCheckDefault").checked) {
-    api_get = "/laptops/list/get/1";
-  } else {
-    api_get = "/laptops/list/get/0";
-  }
   console.log(api_get);
 
   return fetch(api_get)
@@ -34,7 +17,8 @@ function getLaptops() {
       console.error("Error fetching laptop list:", error);
       throw error;
     });
-}
+};
+
 // Filter laptops by company
 function filterLaptops(company) {
   getLaptops()
@@ -49,18 +33,17 @@ function filterLaptops(company) {
     });
 }
 
-function updateTable(company) {
+function updateTable() {
+  const company = document.getElementById("select").value;
+  const showall = document.getElementById("flexSwitchCheckDefault").checked;
   const table = document.querySelector(".table");
 
-  getLaptops()
+  getLaptops(showall)
     .then((data) => {
-      let result = [];
-
-      if (company == "all") {
-        result = data;
-      } else {
-        result = data.filter((item) => item.company === company);
-      }
+      const result =
+        company === "all"
+          ? data
+          : data.filter((item) => item.company === company);
 
       const tbody = table.querySelector("tbody");
       tbody.innerHTML = "";
@@ -68,19 +51,13 @@ function updateTable(company) {
       result.forEach((item) => {
         const row = tbody.insertRow(-1);
 
-        const cell1 = row.insertCell(0);
-        const cell2 = row.insertCell(1);
-        const cell3 = row.insertCell(2);
-        const cell4 = row.insertCell(3);
-
         const link = document.createElement("a");
         link.href = "/laptop/panel/" + item.id;
         link.textContent = item.id;
-        cell1.appendChild(link);
-
-        cell2.textContent = item.model;
-        cell3.textContent = item.serial_number;
-        cell4.textContent = item.status;
+        row.insertCell(0).appendChild(link);
+        row.insertCell(1).textContent = item.model;
+        row.insertCell(2).textContent = item.serial_number;
+        row.insertCell(3).textContent = item.status;
       });
 
       console.log("Filtered laptop list:", result);
