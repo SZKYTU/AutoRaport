@@ -37,12 +37,6 @@ def start():
 def laptop_list():
     return render_template('laptop_list_form.html')
 
-
-@app.route('/laptop/panel/<int:laptop_id>')
-def laptop_panel(laptop_id):
-    return f'{laptop_id}'
-
-
 @app.route('/laptop')
 def laptops():
     return render_template('laptops.html')
@@ -61,6 +55,25 @@ def protosols_list():
 @app.route('/protocol/view/<int:protocol_id>', methods=['GET'])
 def get_protocol_view(protocol_id):
     return render_template('protocol_form.html', protocol_id=protocol_id)
+
+
+@app.route('/laptop/panel/<int:laptop_id>', methods=['GET'])
+def laptop_panel(laptop_id):
+    try:
+        # tuple [0] - serial_number, [1] - model, [2] - company, [3] - status
+        laptop_info = session.query(Laptop.serial_number, Laptop.model, Laptop.company, Laptop.status).filter(
+            Laptop.id == laptop_id).first()
+
+        if laptop_info:
+            return render_template('laptop_panel.html', laptop_id=laptop_id, laptop_info=laptop_info)
+        else:
+            return jsonify({'error': 'Laptop not found'}), 404
+
+    except SQLAlchemyError as e:
+        print(f"Database error occurred: {e}")
+
+    finally:
+        session.close()
 
 
 # API servis
