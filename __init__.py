@@ -10,6 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask, render_template, request, jsonify, abort, make_response, redirect, url_for
 from laptop_restore import LaptopOperation
 from laptop_list_module import LaptopList
+from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -97,23 +98,34 @@ def add_laptop():
 
 @app.route('/protocol/users', methods=['GET'])
 def get_users():
-    domain_login = request.args.get('domain_login')
-    users = session.query(User).filter_by(domain_login=domain_login).all()
-    users_dict = [{'id': user.id, 'name': user.name, 'l_name': user.l_name,
-                   'domain_login': user.domain_login} for user in users]
-    print(f"latopt {users_dict}")
-    return jsonify(users_dict)
+    try:
+        domain_login = request.args.get('domain_login')
+        users = session.query(User).filter_by(domain_login=domain_login).all()
+        users_dict = [{'id': user.id, 'name': user.name, 'l_name': user.l_name,
+                       'domain_login': user.domain_login} for user in users]
+        print(f"latopt {users_dict}")
+        return jsonify(users_dict)
+    except SQLAlchemyError as e:
+        print("Database error: (/protocol/users)", e)
+    finally:
+        session.close()
 
 
 @app.route('/protocol/laptops', methods=['GET'])
 def get_laptops():
-    company = request.args.get('company')
-    laptops = session.query(Laptop).filter(
-        Laptop.company == company, Laptop.status == 'New').all()
-    laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
-                     'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status} for laptop in laptops]
-    print(f"laptop {laptops_dict}")
-    return jsonify(laptops_dict)
+    try:
+        company = request.args.get('company')
+        laptops = session.query(Laptop).filter(Laptop.company == company, Laptop.status == 'New').all()
+        laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
+                         'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status} 
+                        for laptop in laptops]
+        return jsonify(laptops_dict)
+
+    except SQLAlchemyError as e:
+        print("Database error: (/protocol/laptops)", e)
+    
+    finally:
+        session.close()
 
 
 @app.route('/protocol/status/<int:protocol_id>', methods=['GET'])
@@ -129,80 +141,102 @@ def get_protocol_status(protocol_id):
 
 
 @app.route('/protocol/return', methods=['POST'])
-def protoco_return():
+def protocol_return():
     data = request.get_json()
-    # data == [user.id, laptop.id, chargerStatus, mouse_keyboard_status] ...carbonara
+
     if not data:
         return jsonify({'error': 'response error'}), 400
     if len(data) != 4:
         return jsonify({'error': 'response error (array)'}), 400
 
-    user = session.query(User).get(data[0])
-
-    protocol = Protocol(date=datetime.now(),
-                        last_name=user.l_name,
-                        laptop_id=data[1],
-                        user_id=data[0],
-                        charger=data[2],
-                        mouse_keyboard_status=data[3],
-                        coment='No comments',
-                        scan_receiving=b'None',
-                        scan_delivery=b'None')
+    session = Session()
 
     try:
+        user = session.query(User).get(data[0])
+
+        protocol = Protocol(date=datetime.now(),
+                            last_name=user.l_name,
+                            laptop_id=data[1],
+                            user_id=data[0],
+                            charger=data[2],
+                            mouse_keyboard_status=data[3],
+                            coment='No comments',
+                            scan_receiving=b'None',
+                            scan_delivery=b'None')
         session.add(protocol)
 
-        session.execute(update(Laptop).where(
-            Laptop.id == data[1]).values(status=0))
+        session.execute(update(Laptop).where(Laptop.id == data[1]).values(status=0))
 
         session.commit()
+        
         return jsonify({'success': 'success'})
+    
     except IntegrityError:
         session.rollback()
-        return jsonify({'error': 'invalid data'})
+        print('error', 'An error occurred/ rollback')
+    
+    except Exception:
+        session.rollback()
+        print('error', 'An error occurred')
+    
+    finally:
+        session.close()
 
 
 @app.route('/protocols/show', methods=['GET'])
 def get_protocols():
-    protocols = session.query(Protocol).order_by(Protocol.date.desc()).all()
-    results = []
-    for protocol in protocols:
-        result = {
-            'id': protocol.id,
-            'last_name': protocol.last_name,
-            'date': protocol.date.strftime('%d/%m/%Y'),
-            'delivery_status': protocol.delivery_status,
-            'receiving_status': protocol.receiving_status,
-        }
-        results.append(result)
-    return jsonify(results)
+    try:
+        protocols = session.query(Protocol).order_by(Protocol.date.desc()).all()
+        results = []
+        for protocol in protocols:
+            result = {
+                'id': protocol.id,
+                'last_name': protocol.last_name,
+                'date': protocol.date.strftime('%d/%m/%Y'),
+                'delivery_status': protocol.delivery_status,
+                'receiving_status': protocol.receiving_status,
+            }
+            results.append(result)
+        return jsonify(results)
 
+    except SQLAlchemyError as e:
+        print("Database error: (/protocol/show)", e)
+
+    finally:
+        session.close()
 
 @app.route('/protocol/<int:protocol_id>', methods=['GET'])
 def get_protocol(protocol_id):
-    session = Session()
-    protocol = session.query(Protocol).filter(
-        Protocol.id == protocol_id).first()
-    laptop = session.query(Laptop).filter(
-        Laptop.id == protocol.laptop_id).first()
-    session.close()
-    if protocol:
-        response_data = {
-            'protocol': {
-                'id': protocol.id,
-                'date': protocol.date.strftime('%d/%m/%Y'),
-                'last_name': protocol.last_name,
-                'laptop_id': protocol.laptop_id,
-            },
-            'laptop': {
-                'serial_number': laptop.serial_number,
-                'model': laptop.model,
-                'company': laptop.company,
-                'status': laptop.status,
-            }}
-        return jsonify(response_data)
-    else:
-        return jsonify({'message': 'Protocol not found'}), 404
+    try:
+        session = Session()
+        protocol = session.query(Protocol).filter(Protocol.id == protocol_id).first()
+        laptop = None
+        if protocol:
+            laptop = session.query(Laptop).filter(Laptop.id == protocol.laptop_id).first()
+
+        if protocol and laptop:
+            response_data = {
+                'protocol': {
+                    'id': protocol.id,
+                    'date': protocol.date.strftime('%d/%m/%Y'),
+                    'last_name': protocol.last_name,
+                    'laptop_id': protocol.laptop_id,
+                },
+                'laptop': {
+                    'serial_number': laptop.serial_number,
+                    'model': laptop.model,
+                    'company': laptop.company,
+                    'status': laptop.status,
+                }}
+            return jsonify(response_data)
+        else:
+            return jsonify({'message': 'Protocol or associated laptop not found'}), 404
+
+    except SQLAlchemyError as e:
+        print("Database error: (/protocol/id)", e)
+
+    finally:
+        session.close()
 
 # TODO:
 
