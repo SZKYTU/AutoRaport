@@ -37,6 +37,7 @@ def start():
 def laptop_list():
     return render_template('laptop_list_form.html')
 
+
 @app.route('/laptop')
 def laptops():
     return render_template('laptops.html')
@@ -79,7 +80,7 @@ def laptop_panel(laptop_id):
 # API servis
 
 @app.route('/laptops/list/get/<int:status>', methods=['GET'])
-def get_laptop_list(status): 
+def get_laptop_list(status):
     laptop_dict = LaptopList.get_laptop_list(status)
     return jsonify(laptop_dict)
 
@@ -128,15 +129,16 @@ def get_users():
 def get_laptops():
     try:
         company = request.args.get('company')
-        laptops = session.query(Laptop).filter(Laptop.company == company, Laptop.status == 'New').all()
+        laptops = session.query(Laptop).filter(
+            Laptop.company == company, Laptop.status == 'New').all()
         laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
-                         'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status} 
+                         'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status}
                         for laptop in laptops]
         return jsonify(laptops_dict)
 
     except SQLAlchemyError as e:
         print("Database error: (/protocol/laptops)", e)
-    
+
     finally:
         session.close()
 
@@ -178,20 +180,21 @@ def protocol_return():
                             scan_delivery=b'None')
         session.add(protocol)
 
-        session.execute(update(Laptop).where(Laptop.id == data[1]).values(status=0))
+        session.execute(update(Laptop).where(
+            Laptop.id == data[1]).values(status=0))
 
         session.commit()
-        
+
         return jsonify({'success': 'success'})
-    
+
     except IntegrityError:
         session.rollback()
         print('error', 'An error occurred/ rollback')
-    
+
     except Exception:
         session.rollback()
         print('error', 'An error occurred')
-    
+
     finally:
         session.close()
 
@@ -199,7 +202,8 @@ def protocol_return():
 @app.route('/protocols/show', methods=['GET'])
 def get_protocols():
     try:
-        protocols = session.query(Protocol).order_by(Protocol.date.desc()).all()
+        protocols = session.query(Protocol).order_by(
+            Protocol.date.desc()).all()
         results = []
         for protocol in protocols:
             result = {
@@ -218,14 +222,17 @@ def get_protocols():
     finally:
         session.close()
 
+
 @app.route('/protocol/<int:protocol_id>', methods=['GET'])
 def get_protocol(protocol_id):
     try:
         session = Session()
-        protocol = session.query(Protocol).filter(Protocol.id == protocol_id).first()
+        protocol = session.query(Protocol).filter(
+            Protocol.id == protocol_id).first()
         laptop = None
         if protocol:
-            laptop = session.query(Laptop).filter(Laptop.id == protocol.laptop_id).first()
+            laptop = session.query(Laptop).filter(
+                Laptop.id == protocol.laptop_id).first()
 
         if protocol and laptop:
             response_data = {

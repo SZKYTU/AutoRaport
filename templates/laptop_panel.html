@@ -60,42 +60,29 @@
           </div>
           <div class="mb-3">
             <label class="form-label"><strong>Aktualny Stan:</strong></label>
-            <p class="form-control bg-light">{{laptop_info[3]}}</p>
+            <p class="form-control bg-light">
+              {{"dostępny" if laptop_info[3] == "New" else "Niedosteępny"}}
+            </p>
           </div>
 
           <!-- action -->
           <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <button class="btn btn-secondary" type="button" {{"enable" if laptop_info[3] == "New" else "disabled"}}>
+              Przypisz Użytkownika
+            </button>
             <button
               class="btn btn-danger me-md-2"
               type="button"
               onclick="confirmDelete()"
-            >
+            {{"enable" if laptop_info[3] == "New" else "disabled"}}>
               Usuń Laptopa
             </button>
-            <button
-              class="btn btn-primary me-md-2"
-              type="button"
-              onclick="editDetails()"
-            >
-              Edytuj Dane
-            </button>
-            <button class="btn btn-secondary" type="button">
-              Przypisz Użytkownika
-            </button>
-            <button class="btn btn-warning ms-md-2" type="button">
-              Zgłoś Serwis
-            </button>
           </div>
-        </div>
-        <div class="card-footer text-muted">
-          Ostatnia aktualizacja: 01/01/2024
         </div>
       </div>
     </div>
 
-    <script>
-      // JS SOURCE
-    </script>
+    <script src="{{ url_for('static', filename='laptop_panel.js') }}"></script>
     <!-- Bootstrap anad JS-->
     <script src="path/to/bootstrap/js/bootstrap.bundle.min.js"></script>
   </body>
