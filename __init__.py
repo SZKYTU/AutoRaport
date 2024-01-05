@@ -324,14 +324,16 @@ def protocol_download(protocol_id, type):
 def gen_protocol(protocol_id, type):
     protocol = session.query(Protocol).filter(
         Protocol.id == protocol_id).first()
+    laptop_company = session.query(Laptop.company).filter(
+        Laptop.id == protocol.laptop_id).first()
     # ...
     name = session.query(User.name).filter(User.id == protocol.user_id).first()
     if type == 'receiving':
         response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
-                                protocol.last_name + " " + name.name, "receiving", protocol_id, protocol.charger)
+                                protocol.last_name + " " + name.name, "receiving", protocol_id, protocol.charger, laptop_company)
     elif type == 'delivery':
         response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
-                                protocol.last_name + " " + name.name, "delivery", protocol_id, protocol.charger)
+                                protocol.last_name + " " + name.name, "delivery", protocol_id, protocol.charger,laptop_company)
 
     else:
         abort(400, "Invalid argument!")
@@ -340,4 +342,4 @@ def gen_protocol(protocol_id, type):
 
 
 if __name__ == '__main__':
-    app.run(port=5001, host="0.0.0.0")
+    app.run(port=5000, host="0.0.0.0")
