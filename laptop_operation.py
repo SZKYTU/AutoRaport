@@ -30,12 +30,14 @@ class LaptopOperation():
         laptop_to_delete = session.query(Laptop).filter_by(
             id=laptop_id).first()
 
-        try:
-            session.delete(laptop_to_delete)
-            # TODO: add if statement to check if laptop is not in use
-            session.commit()
-            # return jsonify({'success': 'success'}) FIXME: add return
-        except SQLAlchemyError as e:
-            print("Database error: (/laptops/delete)", e)
-        finally:
-            session.close()
+        if laptop_to_delete.status == "New":  # check if laptop is in use
+            try:
+                session.delete(laptop_to_delete)
+                session.commit()
+                return ({'success': f'delete laptop id: {laptop_to_delete.id} success'})
+            except SQLAlchemyError as e:
+                print("Database error: (/laptops/delete)", e)
+            finally:
+                session.close()
+        else:
+            return "Laptop in use"
