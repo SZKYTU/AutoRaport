@@ -41,6 +41,7 @@
     <!-- js sweet alert -->
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
   </head>
   <body>
     <div class="container mt-4">
@@ -71,20 +72,24 @@
 
           <!-- action -->
           <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-            <button class="btn btn-secondary" type="button" {{"enable" if laptop_info[3] == "New" else "disabled"}}>
-              Przypisz Użytkownika
+            <button class="btn btn-secondary" type="button" 
+            onclick="update_laptop_company({{laptop_id}})" {{"enable" if laptop_info[3] == "New" else "disabled"}}>
+              Zmień Spółkę
             </button>
             <button
               class="btn btn-danger me-md-2"
               type="button"
-              onclick="showPopup()"
+              onclick="showPopup({{laptop_id}})"
             {{"enable" if laptop_info[3] == "New" else "disabled"}}>
-              Usuń Laptopa
+              Utylizacja Laptopa
             </button>
           </div>
         </div>
       </div>
     </div>
+
+
+    
 
     <script src="{{ url_for('static', filename='laptop_panel.js') }}"></script>
     <!-- Bootstrap anad JS-->

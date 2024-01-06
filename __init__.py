@@ -8,7 +8,8 @@ from werkzeug.utils import secure_filename
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask, render_template, request, jsonify, abort, make_response, redirect, url_for
-from laptop_restore import LaptopOperation
+# from laptop_restore import LaptopOperation
+from laptop_operation import LaptopOperation
 from laptop_list_module import LaptopList
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -110,8 +111,15 @@ def add_laptop():
         return jsonify({'success': True, 'message': 'success'})
 
 
-@app.route('/laptops/delete/<int:laptop_id>', methods=['DELETE'])
-def laptop_delete(laptop_id): LaptopOperation.laptop_delete(laptop_id)
+@app.route('/laptop/utilization/<int:laptop_id>', methods=['DELETE'])
+def laptop_utilization(laptop_id):
+    return jsonify(
+        LaptopOperation.laptop_utilization(laptop_id))
+
+
+@app.route('/laptop/update/<int:laptop_id>/<string:company>', methods=['PUT'])
+def laptop_company_update(laptop_id, company):
+    return jsonify(LaptopOperation.laptop_company_update(laptop_id, company))
 
 
 @app.route('/protocol/users', methods=['GET'])

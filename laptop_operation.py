@@ -23,21 +23,43 @@ class LaptopOperation():
         session.execute(stmt)
         session.commit()
 
-    def laptop_delete(laptop_id):
+    def laptop_utilization(laptop_id):
         Session = sessionmaker(bind=engine)
         session = Session()
 
-        laptop_to_delete = session.query(Laptop).filter_by(
+        laptop_to_utilization = session.query(Laptop).filter_by(
             id=laptop_id).first()
+        print(laptop_to_utilization.status)
 
-        if laptop_to_delete.status == "New":  # check if laptop is in use
+        if laptop_to_utilization.status == "New":  # check if laptop is in use
             try:
-                session.delete(laptop_to_delete)
+                update_query = update(Laptop).where(
+                    Laptop.id == laptop_id).values(status="utilization")
+                session.execute(update_query)
                 session.commit()
-                return ({'success': f'delete laptop id: {laptop_to_delete.id} success'})
+                return ({'success': 'utilization laptop success'})
             except SQLAlchemyError as e:
-                print("Database error: (/laptops/delete)", e)
+                print("Database error: (/laptops/utilization)", e)
             finally:
                 session.close()
         else:
             return "Laptop in use"
+
+    def laptop_company_update(laptop_id, company):
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        company_list = ['TelForceOne', "MpTech", "Momi", "R2", "Teletorium"]
+
+        if company in company_list:  # validation company name
+            try:
+                update_query = update(Laptop).where(
+                    Laptop.id == laptop_id).values(company=company)
+                session.execute(update_query)
+                session.commit()
+                return ({'success': 'company update success'})
+            except SQLAlchemyError as e:
+                print("Database error: (/laptops/company)", e)
+            finally:
+                session.close()
+        else:
+            return "Invalid company name"
