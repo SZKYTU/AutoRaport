@@ -110,6 +110,10 @@ def add_laptop():
         return jsonify({'success': True, 'message': 'success'})
 
 
+@app.route('/laptops/delete/<int:laptop_id>', methods=['DELETE'])
+def laptop_delete(laptop_id): LaptopOperation.laptop_delete(laptop_id)
+
+
 @app.route('/protocol/users', methods=['GET'])
 def get_users():
     try:
@@ -333,7 +337,7 @@ def gen_protocol(protocol_id, type):
                                 protocol.last_name + " " + name.name, "receiving", protocol_id, protocol.charger, laptop_company)
     elif type == 'delivery':
         response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
-                                protocol.last_name + " " + name.name, "delivery", protocol_id, protocol.charger,laptop_company)
+                                protocol.last_name + " " + name.name, "delivery", protocol_id, protocol.charger, laptop_company)
 
     else:
         abort(400, "Invalid argument!")
@@ -342,4 +346,4 @@ def gen_protocol(protocol_id, type):
 
 
 if __name__ == '__main__':
-    app.run(port=5000, host="0.0.0.0")
+    app.run(port=5001, host="0.0.0.0")

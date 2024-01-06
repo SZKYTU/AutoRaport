@@ -37,6 +37,10 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+    
+    <!-- js sweet alert -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   </head>
   <body>
     <div class="container mt-4">
@@ -73,7 +77,7 @@
             <button
               class="btn btn-danger me-md-2"
               type="button"
-              onclick="confirmDelete()"
+              onclick="showPopup()"
             {{"enable" if laptop_info[3] == "New" else "disabled"}}>
               Usuń Laptopa
             </button>
