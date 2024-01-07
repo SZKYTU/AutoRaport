@@ -63,3 +63,5 @@ class LaptopOperation():
                 session.close()
         else:
             return "Invalid company name"
+
+    # def laptop_to_protocol_generate(laptop_id, user_id):

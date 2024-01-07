@@ -8,7 +8,6 @@ from werkzeug.utils import secure_filename
 from models import Protocol, Laptop, engine, User
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask, render_template, request, jsonify, abort, make_response, redirect, url_for
-# from laptop_restore import LaptopOperation
 from laptop_operation import LaptopOperation
 from laptop_list_module import LaptopList
 from sqlalchemy.exc import SQLAlchemyError
@@ -126,10 +125,12 @@ def laptop_company_update(laptop_id, company):
 def get_users():
     try:
         domain_login = request.args.get('domain_login')
-        users = session.query(User).filter_by(domain_login=domain_login).all()
+        users = session.query(User).filter(
+            User.domain_login.like(f"{domain_login}%")).all()
+
         users_dict = [{'id': user.id, 'name': user.name, 'l_name': user.l_name,
                        'domain_login': user.domain_login} for user in users]
-        print(f"latopt {users_dict}")
+        # print(f"latopt {users_dict}")
         return jsonify(users_dict)
     except SQLAlchemyError as e:
         print("Database error: (/protocol/users)", e)

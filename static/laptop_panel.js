@@ -63,3 +63,52 @@ const update_laptop_request = (laptop_id, company) => {
     .then((data) => console.log("Success:", data))
     .catch((error) => console.error("Error:", error));
 };
+
+const openSweetAlert = () => {
+  Swal.fire({
+    html: '<div id="list"></div>',
+    title: "Wyszukaj",
+    input: "text",
+    inputLabel: "Wpisz zapytanie",
+    showCancelButton: true,
+    confirmButtonText: "Szukaj",
+    didOpen: () => {
+      // Nasłuchiwanie na zmiany w polu tekstowym
+      Swal.getInput().addEventListener("input", (e) => {
+        const value = e.target.value;
+        // Tutaj wywołaj funkcję, która wyśle zapytanie do bazy danych
+        if (value.length > 3) {
+          // Przykład minimalnej długości zapytania
+          queryDatabase(value);
+        }
+      });
+    },
+  });
+};
+
+// Funkcja wysyłająca zapytanie do bazy danych
+const queryDatabase = async (query) => {
+  try {
+    // Tutaj używaj swojego API lub endpointu
+    const response = await fetch("/protocol/users", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query: query }),
+    });
+    const data = await response.json();
+    // Wyświetl wyniki
+    displayResults(data);
+  } catch (error) {
+    console.error("Error:", error);
+    displayResults(error);
+  }
+};
+
+// Funkcja wyświetlająca wyniki pod polem tekstowym
+const displayResults = (data) => {
+  const list = document.getElementById("list");
+  list.innerHTML = JSON.stringify(data);
+  console.log(data);
+};
