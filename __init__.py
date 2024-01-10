@@ -11,8 +11,10 @@ from flask import Flask, render_template, request, jsonify, abort, make_response
 from laptop_operation import LaptopOperation
 from laptop_list_module import LaptopList
 from sqlalchemy.exc import SQLAlchemyError
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config['JSON_AS_ASCII'] = False
 
 Session = sessionmaker(bind=engine)

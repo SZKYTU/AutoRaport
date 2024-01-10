@@ -6,16 +6,16 @@ export const LaptopList = () => {
   const [company, setCompany] = useState("none");
 
   useEffect(() => {
-    // fetch(`http://localhost:5000/laptops/${company}`)
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     setElements(data);
-    //   });
-    setElements([
-      { id: 1, model: "asus", sn: "1112", status: "status", visible: true },
-      { id: 2, model: "macbook", sn: "321", status: "status", visible: true },
-      { id: 3, model: "lenovo", sn: "123", status: "status", visible: true },
-    ]);
+    fetch(`http://localhost:5001/protocol/laptops?${company}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setElements(data);
+      });
+    // setElements([
+    //   { id: 1, model: "asus", sn: "1112", status: "status", visible: true },
+    //   { id: 2, model: "macbook", sn: "321", status: "status", visible: true },
+    //   { id: 3, model: "lenovo", sn: "123", status: "status", visible: true },
+    // ]);
   }, [company]);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const LaptopList = () => {
         element.visible =
           element.model.includes(search) || element.sn.includes(search);
         return element;
-      }),
+      })
     );
   }, [search]);
 
