@@ -1,32 +1,34 @@
-import classes from "./Home.module.css";
 import { useEffect, useState } from "react";
 export const LaptopList = () => {
-  const [elements, setElements] = useState([]);
+  const [elements, setElements] = useState({ data: [] });
   const [search, setSearch] = useState("");
   const [company, setCompany] = useState("none");
+  const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:5001/protocol/laptops?${company}`)
+    fetch(`http://localhost:5001/protocol/laptops?company=${company}`)
       .then((response) => response.json())
+      .then((el) => el.map((item) => ({ ...item, visible: true })))
       .then((data) => {
-        setElements(data);
+        setElements({ data });
       });
-    // setElements([
-    //   { id: 1, model: "asus", sn: "1112", status: "status", visible: true },
-    //   { id: 2, model: "macbook", sn: "321", status: "status", visible: true },
-    //   { id: 3, model: "lenovo", sn: "123", status: "status", visible: true },
-    // ]);
   }, [company]);
 
   useEffect(() => {
-    setElements((prev) =>
-      prev.map((element) => {
+    setElements((prev) => ({
+      ...prev,
+      data: prev.data.map((element) => {
         element.visible =
-          element.model.includes(search) || element.sn.includes(search);
+          element.model.includes(search) ||
+          element.serial_number.includes(search);
         return element;
-      })
-    );
+      }),
+    }));
   }, [search]);
+
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+  };
 
   return (
     <div className="container">
@@ -54,6 +56,8 @@ export const LaptopList = () => {
               type="checkbox"
               role="switch"
               id="flexSwitchCheckDefault"
+              checked={isChecked}
+              onChange={handleCheckboxChange}
             />
             <label
               className="form-check-label"
@@ -88,13 +92,13 @@ export const LaptopList = () => {
         </thead>
 
         <tbody id="laptops-table-body">
-          {elements.map((element) => {
+          {elements.data?.map((element) => {
             if (!element.visible) return null;
             return (
               <tr key={element.id}>
                 <td>{element.id}</td>
                 <td>{element.model}</td>
-                <td>{element.sn}</td>
+                <td>{element.serial_number}</td>
                 <td>{element.status}</td>
               </tr>
             );
