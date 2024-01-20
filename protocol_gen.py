@@ -42,22 +42,22 @@ def generate_pdf(model_laptop, serial_number, worker, type, protocolid, charger_
         c.drawString(1 * inch, 10.5 * inch - 2.75 *
                      inch, f"Data: {current_date}")
 
-        wydajacy_x = 1.5 * inch - \
+        spending_x = 1.5 * inch - \
             c.stringWidth("Przyjmujący:", "DejaVuSans", 13) / 2
-        wydajacy_y = 1.5 * inch
+        spending_y = 1.5 * inch
 
-        odbiorca_x = letter[0] - \
+        reciver_x = letter[0] - \
             c.stringWidth("Odbierający:", "DejaVuSans", 13) - 1.5 * inch
-        odbiorca_y = 1.5 * inch
+        reciver_y = 1.5 * inch
 
-        c.drawString(wydajacy_x, wydajacy_y, "Zdający:")
-        c.drawString(odbiorca_x, odbiorca_y, "Odbierający:")
+        c.drawString(spending_x, spending_y, "Zdający:")
+        c.drawString(reciver_x, reciver_y, "Odbierający:")
 
         c.setDash(1, 2)
-        c.line(wydajacy_x, wydajacy_y - 0.25 * inch,
-               wydajacy_x + 1.5 * inch, wydajacy_y - 0.25 * inch)
-        c.line(odbiorca_x, odbiorca_y - 0.25 * inch,
-               odbiorca_x + 1.5 * inch, odbiorca_y - 0.25 * inch)
+        c.line(spending_x, spending_y - 0.25 * inch,
+               spending_x + 1.5 * inch, spending_y - 0.25 * inch)
+        c.line(reciver_x, reciver_y - 0.25 * inch,
+               reciver_x + 1.5 * inch, reciver_y - 0.25 * inch)
 
         date_line_y = 10.5 * inch - 3 * inch
         c.line(1 * inch, date_line_y, letter[0] - 1 * inch, date_line_y)
