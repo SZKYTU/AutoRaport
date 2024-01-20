@@ -273,8 +273,6 @@ def get_protocol(protocol_id):
     finally:
         session.close()
 
-# TODO:
-
 
 @app.route('/protocol/upload/<int:protocol_id>/<string:type>/<int:restore>', methods=['GET', 'POST'])
 def protocol_upload(protocol_id, type, restore):
@@ -285,6 +283,7 @@ def protocol_upload(protocol_id, type, restore):
             return 'File size exceeds the limit. Max size allowed is 1 MB.'
 
         filename = secure_filename(file.filename)
+
         if filename.endswith('.pdf'):
             file_data = file.read()
             session = Session()
@@ -318,9 +317,11 @@ def allowed_file(filename):
 
 @app.route('/protocol/download/<int:protocol_id>/<string:type>', methods=['GET', 'POST'])
 def protocol_download(protocol_id, type):
+
     protocol = session.query(Protocol).filter(
         Protocol.id == protocol_id).first()
     session.close()
+
     if type == "receiving":
         response = make_response(protocol.scan_receiving)
     elif type == "delivery":
@@ -329,6 +330,7 @@ def protocol_download(protocol_id, type):
         abort(400, "Invalid argument!")
 
     file_name = unidecode(protocol.last_name)
+
     response.headers[
         'Content-Disposition'] = f'attachment; filename=scan - {file_name}.pdf'
     response.headers['Content-Type'] = 'application/pdf'
