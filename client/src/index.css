@@ -13,3 +13,12 @@ body {
   margin: 0;
   padding: 0;
 }
+
+.row-hover:hover {
+  background-color: #f2f2f2;
+  cursor: pointer;
+}
+
+tr.row-hover:hover {
+  background-color: #f2f2f2;
+}

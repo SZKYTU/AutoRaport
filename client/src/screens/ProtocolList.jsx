@@ -1,3 +1,4 @@
+// import classes from "./Home.module.css";
 import { useEffect, useState } from "react";
 export const ProtocolList = () => {
   const [search, setSearch] = useState("");
@@ -8,6 +9,7 @@ export const ProtocolList = () => {
       .then((response) => response.json())
       .then((el) => el.map((item) => ({ ...item, visible: true })))
       .then((protocols) => {
+        console.log(protocols);
         setData({ protocols });
       });
   }, []);
@@ -16,8 +18,11 @@ export const ProtocolList = () => {
     setData((prev) => ({
       ...prev,
       protocols: prev.protocols.map((element) => {
+        const lowerCaseSearch = search.toLowerCase();
         element.visible =
-          element.last_name.includes(search) || element.date.includes(search);
+          element.last_name.toLowerCase().includes(lowerCaseSearch) ||
+          element.date.includes(search) ||
+          element.id.toString().includes(search);
         return element;
       }),
     }));
@@ -48,7 +53,13 @@ export const ProtocolList = () => {
           {data.protocols.map((element) => {
             if (!element.visible) return null;
             return (
-              <tr key={element.id}>
+              <tr
+                key={element.id}
+                onClick={() =>
+                  (window.location.href = "/some-path/" + element.id)
+                }
+                className="row-hover"
+              >
                 <td>{element.id}</td>
                 <td>{element.last_name}</td>
                 <td>{element.date}</td>

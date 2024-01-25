@@ -1,4 +1,4 @@
-import classes from "./Home.module.css";
+// import classes from "./Home.module.css";
 import { useParams } from "react-router-dom";
 export const ProtocolElement = () => {
   const { id } = useParams();
