@@ -1,110 +1,57 @@
 // import classes from "./Home.module.css";
 import { useParams } from "react-router-dom";
+
 export const ProtocolElement = () => {
   const { id } = useParams();
   return (
-    <div>
-      <h1>Protokół nr. {id}</h1>
-      <table id="protocolTable" className="table table-striped text-center">
-        <thead className="thead-dark">
-          <tr>
-            <th>Company</th>
-            <th>Model</th>
-            <th>Serial Number</th>
-            <th>Last Name</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-      <div>
-        <button
-          className="btn btn-primary"
-          onclick="window.location.href = '/protocol/gen/{{ protocol_id }}/receiving'"
-        >
-          Generuj protokół odbiorczy
-        </button>
+    <div className="container my-4">
+      <div className="text-center">
+        <h2>Panel Protokołu id: {id}</h2>
       </div>
-
-      <div>
-        <button
-          className="btn btn-primary"
-          onclick="window.location.href = '/protocol/gen/{{ protocol_id }}/delivery'"
-        >
-          Generuj protokół zdawczy
-        </button>
-      </div>
-
-      <div>
-        <button
-          className="btn btn-primary"
-          onclick="showModalWithOptions('{{ protocol_id }}')"
-        >
-          Podglad protokołów
-        </button>
-      </div>
-
-      <div className="container">
-        <div className="upload-form">
-          <form
-            action="/protocol/upload/{{ protocol_id }}/receiving/9"
-            method="post"
-            enctype="multipart/form-data"
-          >
-            <div className="input-group mb-3">
-              <div className="custom-file">
-                <input
-                  type="file"
-                  className="custom-file-input"
-                  id="receiving-file"
-                  name="file"
-                  onchange="updateFileNameLabel('receiving-file')"
-                />
-                <label className="custom-file-label" for="receiving-file">
-                  Wgraj protokol odbiorczy
-                </label>
-              </div>
-              <div className="input-group-append">
-                <input
-                  type="submit"
-                  className="btn btn-primary"
-                  value="Upload"
-                />
-              </div>
-            </div>
-          </form>
+      <div className="row">
+        <div className="col">
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>ID Protokołu</th>
+                <th>Firma</th>
+                <th>Model Sprzętu</th>
+                <th>Numer Seryjny</th>
+                <th>Imię i Nazwisko</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>{"/* Tutaj umieść wiersze z danymi protokołu */"}</tbody>
+          </table>
         </div>
+      </div>
 
-        <div className="upload-form">
-          <form
-            id="uploadForm"
-            method="post"
-            enctype="multipart/form-data"
-            onsubmit="return beforeSubmit(event)"
-          >
-            <div className="input-group mb-3">
-              <div className="custom-file">
-                <input
-                  type="file"
-                  className="custom-file-input"
-                  id="delivery-file"
-                  name="file"
-                  onchange="updateFileNameLabel('delivery-file')"
-                />
-                <label className="custom-file-label" for="delivery-file">
-                  Wgraj protokol dostawczy
-                </label>
-              </div>
-              <div className="input-group-append">
-                <input
-                  type="submit"
-                  className="btn btn-primary"
-                  value="Upload"
-                />
-              </div>
-            </div>
-          </form>
+      <div className="row">
+        <div className="col">
+          <button className="btn btn-primary me-2">
+            Generuj protokół zdawczy
+          </button>
+          <button className="btn btn-secondary me-2">
+            Generuj protokół odbiorczy
+          </button>
+          <button className="btn btn-success">
+            Wyświetl dostępne protokoły
+          </button>
+        </div>
+      </div>
+
+      <div className="row my-4">
+        <div className="col">
+          <input type="file" className="form-control" />
+          <button className="btn btn-outline-primary mt-2">
+            Wgraj protokół zdawczy
+          </button>
+        </div>
+        <div className="col">
+          <input type="file" className="form-control" />
+          <button className="btn btn-outline-primary mt-2">
+            Wgraj protokół odbiorczy
+          </button>
         </div>
       </div>
     </div>

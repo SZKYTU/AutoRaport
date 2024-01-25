@@ -50,5 +50,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     {router.state.location.pathname !== "/" ? <NavBar /> : null}
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </React.StrictMode>
 );

@@ -9,7 +9,6 @@ export const ProtocolList = () => {
       .then((response) => response.json())
       .then((el) => el.map((item) => ({ ...item, visible: true })))
       .then((protocols) => {
-        console.log(protocols);
         setData({ protocols });
       });
   }, []);
@@ -55,8 +54,8 @@ export const ProtocolList = () => {
             return (
               <tr
                 key={element.id}
-                onClick={() =>
-                  (window.location.href = "/some-path/" + element.id)
+                onClick={
+                  () => (window.location.href = "/protocol/" + element.id) // TODO: create api endpoint for this
                 }
                 className="row-hover"
               >
