@@ -1,5 +1,44 @@
 // import classes from "./Home.module.css";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+
+const download_gen_protocol = (protocolId, type) => {
+  fetch(`http://192.168.1.150:5001/protocol/gen/${protocolId}/${type}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/pdf",
+    },
+  })
+    .then((response) => response.blob())
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = `scan-${type}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    })
+    .catch((error) => console.error("Błąd pobierania:", error));
+};
+const [protocolData, setProtocolData] = useState([]);
+
+const take_protocol_info = (protocolId) => {
+  fetch(`http://192.168.1.150:5001/protocol/${protocolId}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      setProtocolData(data);
+    })
+    .catch((error) => console.error("Błąd pobierania:", error));
+};
 
 export const ProtocolElement = () => {
   const { id } = useParams();
@@ -21,20 +60,38 @@ export const ProtocolElement = () => {
                 <th>Data</th>
               </tr>
             </thead>
-            <tbody>{"/* Tutaj umieść wiersze z danymi protokołu */"}</tbody>
+            <tbody>
+              {protocolData.map((item, index) => (
+                <tr key={index}>
+                  <td>{item.protocolId}</td>
+                  <td>{item.company}</td>
+                  <td>{item.model}</td>
+                  <td>{item.serialNumber}</td>
+                  <td>{item.name}</td>
+                  <td>{item.date}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>
 
       <div className="row">
         <div className="col">
-          <button className="btn btn-primary me-2">
+          <button
+            className="btn btn-primary me-2"
+            onClick={() => download_gen_protocol(id, "delivery")}
+          >
             Generuj protokół zdawczy
           </button>
-          <button className="btn btn-secondary me-2">
+          <button
+            className="btn btn-secondary me-2"
+            onClick={() => download_gen_protocol(id, "receiving")}
+          >
             Generuj protokół odbiorczy
           </button>
           <button className="btn btn-success">
+            {/* TODO: task nr.1 add view serwice */}
             Wyświetl dostępne protokoły
           </button>
         </div>

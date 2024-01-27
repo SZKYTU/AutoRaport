@@ -28,6 +28,7 @@ export const LaptopList = () => {
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
+    console.log(event.target.checked);
   };
 
   return (
