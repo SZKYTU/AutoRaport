@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 export const ProtocolElement = () => {
   const [protocolData, setProtocolData] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const { id } = useParams();
 
   const download_gen_protocol = (protocolId, type) => {
@@ -36,9 +37,33 @@ export const ProtocolElement = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setProtocolData(data); // Ustawienie danych jako obiektu
+        setProtocolData(data);
       })
       .catch((error) => console.error("Błąd pobierania:", error));
+  };
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+    console.log(event.target.files[0]);
+    console.log("wgralem plik");
+  };
+
+  const uploadFile = () => {
+    if (!selectedFile) {
+      console.log("No file selected.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    fetch("http://192.168.1.150:5001/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
   };
 
   useEffect(() => {
@@ -102,8 +127,12 @@ export const ProtocolElement = () => {
 
       <div className="row my-4">
         <div className="col">
-          <input type="file" className="form-control" />
-          <button className="btn btn-outline-primary mt-2">
+          <input
+            type="file"
+            className="form-control"
+            onChange={handleFileChange}
+          />
+          <button onClick={uploadFile} className="btn btn-outline-primary mt-2">
             Wgraj protokół zdawczy
           </button>
         </div>
