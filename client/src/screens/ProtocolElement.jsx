@@ -1,47 +1,50 @@
-// import classes from "./Home.module.css";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-const download_gen_protocol = (protocolId, type) => {
-  fetch(`http://192.168.1.150:5001/protocol/gen/${protocolId}/${type}`, {
-    method: "GET",
-    headers: {
-      Accept: "application/pdf",
-    },
-  })
-    .then((response) => response.blob())
-    .then((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = `scan-${type}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    })
-    .catch((error) => console.error("Błąd pobierania:", error));
-};
-const [protocolData, setProtocolData] = useState([]);
-
-const take_protocol_info = (protocolId) => {
-  fetch(`http://192.168.1.150:5001/protocol/${protocolId}`, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      setProtocolData(data);
-    })
-    .catch((error) => console.error("Błąd pobierania:", error));
-};
-
 export const ProtocolElement = () => {
+  const [protocolData, setProtocolData] = useState(null);
   const { id } = useParams();
+
+  const download_gen_protocol = (protocolId, type) => {
+    fetch(`http://192.168.1.150:5001/protocol/gen/${protocolId}/${type}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/pdf",
+      },
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `scan-${type}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      })
+      .catch((error) => console.error("Błąd pobierania:", error));
+  };
+
+  const take_protocol_info = (protocolId) => {
+    fetch(`http://192.168.1.150:5001/protocol/${protocolId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProtocolData(data); // Ustawienie danych jako obiektu
+      })
+      .catch((error) => console.error("Błąd pobierania:", error));
+  };
+
+  useEffect(() => {
+    take_protocol_info(id);
+  }, [id]);
+
   return (
     <div className="container my-4">
       <div className="text-center">
@@ -61,16 +64,16 @@ export const ProtocolElement = () => {
               </tr>
             </thead>
             <tbody>
-              {protocolData.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.protocolId}</td>
-                  <td>{item.company}</td>
-                  <td>{item.model}</td>
-                  <td>{item.serialNumber}</td>
-                  <td>{item.name}</td>
-                  <td>{item.date}</td>
+              {protocolData && (
+                <tr>
+                  <td>{protocolData.protocol.id}</td>
+                  <td>{protocolData.laptop.company}</td>
+                  <td>{protocolData.laptop.model}</td>
+                  <td>{protocolData.laptop.serial_number}</td>
+                  <td>{protocolData.protocol.last_name}</td>
+                  <td>{protocolData.protocol.date}</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
