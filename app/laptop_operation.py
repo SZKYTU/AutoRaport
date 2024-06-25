@@ -1,10 +1,35 @@
-from models import Protocol, Laptop, engine
+from app.models import Protocol, Laptop, engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import update
 from sqlalchemy.exc import SQLAlchemyError
+from flask import request, jsonify,session
 
 
 class LaptopOperation():
+    def add_laptop():
+        data = request.get_json()
+
+        laptop = Laptop(
+            serial_number=data['serial_number'],
+            model=data['model'],
+            coment=data['coment'],
+            company=data['company'],
+            status=data['status']
+        )
+
+        result = session.query(Laptop).filter(
+            and_(Laptop.serial_number == laptop.serial_number, Laptop.company == laptop.company, Laptop.status == 'New')).all()
+
+        if len(result) > 0:
+            print(result)
+            print("true")
+            return jsonify({'success': False, 'message': 'laptopExist'})
+        else:
+            session.add(laptop)
+            session.commit()
+            print(result)
+            print("false")
+            return jsonify({'success': True, 'message': 'success'})   
 
     def restore(protocol_id, restore_value):
         Session = sessionmaker(bind=engine)

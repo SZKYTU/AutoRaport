@@ -1,85 +1,15 @@
+from flask import request, jsonify, render_template, make_response, abort
+from sqlalchemy import and_, update
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from datetime import datetime
-from sqlalchemy import update, select, literal_column, and_, exists
-from unidecode import unidecode
-from protocol_gen import generate_pdf
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
-from models import Protocol, Laptop, engine, User
-from sqlalchemy.ext.declarative import declarative_base
-from flask import Flask, render_template, request, jsonify, abort, make_response, redirect, url_for
-from laptop_operation import LaptopOperation
-from laptop_list_module import LaptopList
-from sqlalchemy.exc import SQLAlchemyError
-from flask_cors import CORS
+from unidecode import unidecode
+from app.models import Laptop, Protocol, User
+from app.laptop_list_module import LaptopList
+from app.laptop_operation import LaptopOperation
+from app.protocol_gen import generate_pdf
+from app import app, session
 
-app = Flask(__name__)
-CORS(app)
-app.config['JSON_AS_ASCII'] = False
-
-Session = sessionmaker(bind=engine)
-session = Session()
-Base = declarative_base()
-app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
-
-
-# Page servis
-
-@app.errorhandler(404)
-def page_not_found(error):
-    return redirect(url_for('start'))
-
-
-@app.route('/start')
-def start():
-    return render_template('index.html')
-
-
-@app.route('/laptops/list')
-def laptop_list():
-    return render_template('laptop_list_form.html')
-
-
-@app.route('/laptop')
-def laptops():
-    return render_template('laptops.html')
-
-
-@app.route('/protocol')
-def protocol():
-    return render_template('protocol.html')
-
-
-@app.route('/protocols/list')
-def protosols_list():
-    return render_template('protocol_list.html')
-
-
-@app.route('/protocol/view/<int:protocol_id>', methods=['GET'])
-def get_protocol_view(protocol_id):
-    return render_template('protocol_form.html', protocol_id=protocol_id)
-
-
-@app.route('/laptop/panel/<int:laptop_id>', methods=['GET'])
-def laptop_panel(laptop_id):
-    try:
-        # tuple [0] - serial_number, [1] - model, [2] - company, [3] - status
-        laptop_info = session.query(Laptop.serial_number, Laptop.model, Laptop.company, Laptop.status).filter(
-            Laptop.id == laptop_id).first()
-
-        if laptop_info:
-            return render_template('laptop_panel.html', laptop_id=laptop_id, laptop_info=laptop_info)
-        else:
-            return jsonify({'error': 'Laptop not found'}), 404
-
-    except SQLAlchemyError as e:
-        print(f"Database error occurred: {e}")
-
-    finally:
-        session.close()
-
-
-# API servis
 
 @app.route('/laptops/list/get/<int:status>', methods=['GET'])
 def get_laptop_list(status):
@@ -89,27 +19,7 @@ def get_laptop_list(status):
 
 @app.route('/laptops/add', methods=['POST'])
 def add_laptop():
-    data = request.get_json()
-
-    laptop = Laptop(
-        serial_number=data['serial_number'],
-        model=data['model'],
-        coment=data['coment'],
-        company=data['company'],
-        status=data['status']
-    )
-    session = Session()
-
-    result = session.query(Laptop).filter(
-        and_(Laptop.serial_number == laptop.serial_number, Laptop.company == laptop.company, Laptop.status == 'New')).all()
-
-    if len(result) > 0:
-        print("true")
-        return jsonify({'success': False, 'message': 'laptopExist'})
-    else:
-        session.add(laptop)
-        session.commit()
-        return jsonify({'success': True, 'message': 'success'})
+    return LaptopOperation.add_laptop()
 
 
 @app.route('/laptop/utilization/<int:laptop_id>', methods=['DELETE'])
@@ -132,7 +42,6 @@ def get_users():
 
         users_dict = [{'id': user.id, 'name': user.name, 'l_name': user.l_name,
                        'domain_login': user.domain_login} for user in users]
-        # print(f"latopt {users_dict}")
         return jsonify(users_dict)
     except SQLAlchemyError as e:
         print("Database error: (/protocol/users)", e)
@@ -142,20 +51,20 @@ def get_users():
 
 @app.route('/protocol/laptops', methods=['GET'])
 def get_laptops():
-    try:
-        company = request.args.get('company')
-        laptops = session.query(Laptop).filter(
-            Laptop.company == company, Laptop.status == 'New').all()
-        laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
-                         'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status}
-                        for laptop in laptops]
-        return jsonify(laptops_dict)
+        try:
+            company = request.args.get('company')
+            laptops = session.query(Laptop).filter(
+                Laptop.company == company, Laptop.status == 'New').all()
+            laptops_dict = [{'id': laptop.id, 'serial_number': laptop.serial_number, 'model': laptop.model,
+                            'coment': laptop.coment, 'company': laptop.company, 'status': laptop.status}
+                            for laptop in laptops]
+            return jsonify(laptops_dict)
 
-    except SQLAlchemyError as e:
-        print("Database error: (/protocol/laptops)", e)
+        except SQLAlchemyError as e:
+            print("Database error: (/protocol/laptops)", e)
 
-    finally:
-        session.close()
+        finally:
+            session.close()
 
 
 @app.route('/protocol/status/<int:protocol_id>', methods=['GET'])
@@ -178,8 +87,6 @@ def protocol_return():
         return jsonify({'error': 'response error'}), 400
     if len(data) != 4:
         return jsonify({'error': 'response error (array)'}), 400
-
-    session = Session()
 
     try:
         user = session.query(User).get(data[0])
@@ -241,7 +148,6 @@ def get_protocols():
 @app.route('/protocol/<int:protocol_id>', methods=['GET'])
 def get_protocol(protocol_id):
     try:
-        session = Session()
         protocol = session.query(Protocol).filter(
             Protocol.id == protocol_id).first()
         laptop = None
@@ -286,7 +192,7 @@ def protocol_upload(protocol_id, type, restore):
 
         if filename.endswith('.pdf'):
             file_data = file.read()
-            session = Session()
+
             protocol = session.query(Protocol).filter_by(
                 id=protocol_id).first()
             if protocol:
@@ -310,9 +216,6 @@ def protocol_upload(protocol_id, type, restore):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
-
-
-# FIXME:
 
 
 @app.route('/protocol/download/<int:protocol_id>/<string:type>', methods=['GET', 'POST'])
@@ -343,7 +246,6 @@ def gen_protocol(protocol_id, type):
         Protocol.id == protocol_id).first()
     laptop_company = session.query(Laptop.company).filter(
         Laptop.id == protocol.laptop_id).first()
-    # ...
     name = session.query(User.name).filter(User.id == protocol.user_id).first()
     if type == 'receiving':
         response = generate_pdf(protocol.laptop.model, protocol.laptop.serial_number,
@@ -356,7 +258,3 @@ def gen_protocol(protocol_id, type):
         abort(400, "Invalid argument!")
     session.close()
     return response
-
-
-if __name__ == '__main__':
-    app.run(port=5001, host="0.0.0.0")

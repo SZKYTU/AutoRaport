@@ -1,5 +1,33 @@
+import React, { useState } from "react";
 import classes from "./Home.module.css";
+
 export const Laptop = () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const formDataObj = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch("http://192.168.1.150:5001/laptops/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formDataObj),
+      });
+      console.log(response);
+      const data = await response.json();
+      if (data.success) {
+        alert("Laptop został dodany.");
+      } else {
+        alert("Błąd: " + data.message);
+      }
+    } catch (error) {
+      console.error("Błąd:", error);
+      console.error(error);
+      alert("Błąd przy wysyłaniu danych: " + error.message);
+    }
+  };
   return (
     <div className="container">
       <div className="text-center mb-4">
@@ -24,7 +52,7 @@ export const Laptop = () => {
         </a>
       </div>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label" htmlFor="serial_number">
             Numer Seryjnyr:
