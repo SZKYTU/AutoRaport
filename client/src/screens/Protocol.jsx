@@ -8,6 +8,11 @@ export const Protocol = () => {
   const [laptops, setLaptops] = useState([]);
   const [loading, setLoading] = useState(false);
   const [laptopLoading, setLaptopLoading] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedLaptopId, setSelectedLaptopId] = useState(null);
+  const [charger, setCharger] = useState(true);
+  const [mouseKeyboard, setMouseKeyboard] = useState(true);
+  const [laptopBag, setLaptopBag] = useState(false);
 
   useEffect(() => {
     if (query.length >= 4) {
@@ -65,9 +70,60 @@ export const Protocol = () => {
     setLaptopCompany(e.target.value);
   };
 
+  const handleUserSelection = (userId) => {
+    setSelectedUserId(userId);
+  };
+
+  const handleLaptopSelection = (laptopId) => {
+    setSelectedLaptopId(laptopId);
+  };
+
+  const handleChargerChange = () => {
+    setCharger(!charger);
+  };
+
+  const handleMouseKeyboardChange = () => {
+    setMouseKeyboard(!mouseKeyboard);
+  };
+
+  const handleLaptopBagChange = () => {
+    setLaptopBag(!laptopBag);
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
   };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const protocolData = {
+    user_id: selectedUserId,
+    laptop_id: selectedLaptopId,
+    charger: charger,
+    mouse_keyboard_status: mouseKeyboard,
+    laptop_bag_status: laptopBag
+  };
+
+  try {
+    const response = await fetch('http://localhost:5001/protocol/return', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(protocolData)
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      console.log('Success:', data);
+    } else {
+      console.error('Error Response:', data);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
 
   return (
     <div className="container">
@@ -109,7 +165,12 @@ export const Protocol = () => {
               <td>{item.domain_login}</td>
               <td>{item.company}</td>
               <td>
-                <input type="radio" />
+                <input 
+                  type="radio" 
+                  name="selectedUser" 
+                  onChange={() => handleUserSelection(item.id)} 
+                  checked={selectedUserId === item.id} 
+                />
               </td>
             </tr>
           ))}
@@ -117,7 +178,7 @@ export const Protocol = () => {
       </table>
 
       <h2>Laptopy</h2>
-      <form id="laptop-form">
+      <form id="laptop-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="laptop-company">Firma:</label>
           <select
@@ -146,7 +207,6 @@ export const Protocol = () => {
             <th>Model</th>
             <th>Komentarz</th>
             <th>Firma</th>
-            <th>Status</th>
             <th> </th>
           </tr>
         </thead>
@@ -158,9 +218,13 @@ export const Protocol = () => {
               <td>{item.model}</td>
               <td>{item.comment}</td>
               <td>{item.company}</td>
-              <td>{item.status}</td>
               <td>
-                <input type="radio" />
+                <input 
+                  type="radio" 
+                  name="selectedLaptop" 
+                  onChange={() => handleLaptopSelection(item.id)} 
+                  checked={selectedLaptopId === item.id} 
+                />
               </td>
             </tr>
           ))}
@@ -173,7 +237,8 @@ export const Protocol = () => {
           className="form-check-input"
           id="charger"
           name="charger"
-          defaultChecked={true}
+          checked={charger}
+          onChange={handleChargerChange}
         />
         <label className="form-check-label" htmlFor="charger">
           Ładowarka
@@ -186,7 +251,8 @@ export const Protocol = () => {
           className="form-check-input"
           id="mouse_keyboard_status"
           name="mouse_keyboard_status"
-          defaultChecked={true}
+          checked={mouseKeyboard}
+          onChange={handleMouseKeyboardChange}
         />
         <label className="form-check-label" htmlFor="mouse_keyboard_status">
           Mysz i klawiatura
@@ -199,6 +265,8 @@ export const Protocol = () => {
           className="form-check-input"
           id="laptop_bag_status"
           name="laptop_bag_status"
+          checked={laptopBag}
+          onChange={handleLaptopBagChange}
         />
         <label className="form-check-label" htmlFor="laptop_bag_status">
           Torba na laptopa
@@ -206,7 +274,7 @@ export const Protocol = () => {
       </div>
 
       <div className="d-flex justify-content-between align-items-center">
-        <button id="generate" className="btn btn-primary">
+        <button id="generate" className="btn btn-primary" onClick={handleSubmit}>
           Generuj
         </button>
       </div>

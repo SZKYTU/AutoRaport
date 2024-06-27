@@ -83,27 +83,26 @@ def get_protocol_status(protocol_id):
 def protocol_return():
     data = request.get_json()
 
-    if not data:
-        return jsonify({'error': 'response error'}), 400
-    if len(data) != 4:
-        return jsonify({'error': 'response error (array)'}), 400
+    required_keys = ['user_id', 'laptop_id', 'charger', 'mouse_keyboard_status', 'laptop_bag_status']
+    if not data or not all(key in data for key in required_keys):
+        return jsonify({'error': 'response error (keys)'}), 400
 
     try:
-        user = session.query(User).get(data[0])
+        user = session.query(User).get(data['user_id'])
 
         protocol = Protocol(date=datetime.now(),
                             last_name=user.l_name,
-                            laptop_id=data[1],
-                            user_id=data[0],
-                            charger=data[2],
-                            mouse_keyboard_status=data[3],
+                            laptop_id=data['laptop_id'],
+                            user_id=data['user_id'],
+                            charger=data['charger'],
+                            mouse_keyboard_status=data['mouse_keyboard_status'],
                             coment='No comments',
                             scan_receiving=b'None',
                             scan_delivery=b'None')
         session.add(protocol)
 
         session.execute(update(Laptop).where(
-            Laptop.id == data[1]).values(status=0))
+            Laptop.id == data['laptop_id']).values(status=0))
 
         session.commit()
 
@@ -112,13 +111,17 @@ def protocol_return():
     except IntegrityError:
         session.rollback()
         print('error', 'An error occurred/ rollback')
+        return jsonify({'error': 'integrity error'}), 500
 
-    except Exception:
+    except Exception as e:
         session.rollback()
-        print('error', 'An error occurred')
+        print('error', 'An error occurred', e)
+        return jsonify({'error': 'unknown error'}), 500
 
     finally:
         session.close()
+
+
 
 
 @app.route('/protocols/show', methods=['GET'])
