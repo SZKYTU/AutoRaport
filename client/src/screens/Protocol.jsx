@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+timport React, { useState, useEffect } from "react";
+import { InfoModal } from "../components/InfoModal.jsx";
 import classes from "./Home.module.css";
 
 export const Protocol = () => {
@@ -13,6 +14,7 @@ export const Protocol = () => {
   const [charger, setCharger] = useState(true);
   const [mouseKeyboard, setMouseKeyboard] = useState(true);
   const [laptopBag, setLaptopBag] = useState(false);
+  const [modalShow, setModalShow] = useState(false);
 
   useEffect(() => {
     if (query.length >= 4) {
@@ -117,6 +119,8 @@ const handleSubmit = async (e) => {
     const data = await response.json();
     if (response.ok) {
       console.log('Success:', data);
+      setModalShow(true)
+      // window.location.reload()
     } else {
       console.error('Error Response:', data);
     }

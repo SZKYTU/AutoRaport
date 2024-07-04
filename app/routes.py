@@ -83,9 +83,11 @@ def get_protocol_status(protocol_id):
 def protocol_return():
     data = request.get_json()
 
+    print(data)
     required_keys = ['user_id', 'laptop_id', 'charger', 'mouse_keyboard_status', 'laptop_bag_status']
     if not data or not all(key in data for key in required_keys):
         return jsonify({'error': 'response error (keys)'}), 400
+    print(data)
 
     try:
         user = session.query(User).get(data['user_id'])
