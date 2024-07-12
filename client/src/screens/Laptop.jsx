@@ -8,7 +8,7 @@ export const Laptop = () => {
     const formDataObj = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch("http://192.168.1.150:5001/laptops/add", {
+      const response = await fetch("http://192.168.1.160:5001/laptops/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

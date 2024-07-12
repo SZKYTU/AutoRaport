@@ -107,8 +107,7 @@ def protocol_return():
             Laptop.id == data['laptop_id']).values(status=0))
 
         session.commit()
-
-        return jsonify({'success': 'success'})
+        return jsonify({'success': 'success', 'protocol_id': protocol.id})
 
     except IntegrityError:
         session.rollback()

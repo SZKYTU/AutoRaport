@@ -1,8 +1,10 @@
-from app.models import Protocol, Laptop, engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import update
+from flask import jsonify, request, session
+from sqlalchemy import and_, update
 from sqlalchemy.exc import SQLAlchemyError
-from flask import request, jsonify,session
+from sqlalchemy.orm import sessionmaker
+
+from app import session
+from app.models import Laptop, Protocol, engine
 
 
 class LaptopOperation():
@@ -21,14 +23,10 @@ class LaptopOperation():
             and_(Laptop.serial_number == laptop.serial_number, Laptop.company == laptop.company, Laptop.status == 'New')).all()
 
         if len(result) > 0:
-            print(result)
-            print("true")
             return jsonify({'success': False, 'message': 'laptopExist'})
         else:
             session.add(laptop)
             session.commit()
-            print(result)
-            print("false")
             return jsonify({'success': True, 'message': 'success'})   
 
     def restore(protocol_id, restore_value):

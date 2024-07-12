@@ -1,11 +1,11 @@
-timport React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { InfoModal } from "../components/InfoModal.jsx";
 import classes from "./Home.module.css";
 
 export const Protocol = () => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [user, setUser] = useState([]);
-  const [laptopCompany, setLaptopCompany] = useState('None');
+  const [laptopCompany, setLaptopCompany] = useState("None");
   const [laptops, setLaptops] = useState([]);
   const [loading, setLoading] = useState(false);
   const [laptopLoading, setLaptopLoading] = useState(false);
@@ -14,21 +14,22 @@ export const Protocol = () => {
   const [charger, setCharger] = useState(true);
   const [mouseKeyboard, setMouseKeyboard] = useState(true);
   const [laptopBag, setLaptopBag] = useState(false);
-  const [modalShow, setModalShow] = useState(false);
 
   useEffect(() => {
     if (query.length >= 4) {
       const fetchData = async () => {
         setLoading(true);
         try {
-          const response = await fetch(`http://localhost:5001/protocol/users?domain_login=${query}`);
+          const response = await fetch(
+            `http://localhost:5001/protocol/users?domain_login=${query}`
+          );
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
           }
           const result = await response.json();
           setUser(result);
         } catch (error) {
-          console.error('Error fetching data:', error);
+          console.error("Error fetching data:", error);
         } finally {
           setLoading(false);
         }
@@ -41,18 +42,20 @@ export const Protocol = () => {
   }, [query]);
 
   useEffect(() => {
-    if (laptopCompany !== 'None') {
+    if (laptopCompany !== "None") {
       const fetchLaptops = async () => {
         setLaptopLoading(true);
         try {
-          const response = await fetch(`http://localhost:5001/protocol/laptops?company=${laptopCompany}`);
+          const response = await fetch(
+            `http://localhost:5001/protocol/laptops?company=${laptopCompany}`
+          );
           if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
           }
           const result = await response.json();
           setLaptops(result);
         } catch (error) {
-          console.error('Error fetching laptops:', error);
+          console.error("Error fetching laptops:", error);
         } finally {
           setLaptopLoading(false);
         }
@@ -96,38 +99,38 @@ export const Protocol = () => {
     e.preventDefault();
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const protocolData = {
-    user_id: selectedUserId,
-    laptop_id: selectedLaptopId,
-    charger: charger,
-    mouse_keyboard_status: mouseKeyboard,
-    laptop_bag_status: laptopBag
-  };
+    const protocolData = {
+      user_id: selectedUserId,
+      laptop_id: selectedLaptopId,
+      charger: charger,
+      mouse_keyboard_status: mouseKeyboard,
+      laptop_bag_status: laptopBag,
+    };
 
-  try {
-    const response = await fetch('http://localhost:5001/protocol/return', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(protocolData)
-    });
+    try {
+      const response = await fetch("http://localhost:5001/protocol/return", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(protocolData),
+      });
 
-    const data = await response.json();
-    if (response.ok) {
-      console.log('Success:', data);
-      setModalShow(true)
-      // window.location.reload()
-    } else {
-      console.error('Error Response:', data);
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Success:", data);
+        window.location.href = `http://localhost:5173/protocol/${data.protocol_id}`;
+        // window.location.reload();
+      } else {
+        console.error("Error Response:", data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
     }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
+  };
 
   return (
     <div className="container">
@@ -161,23 +164,25 @@ const handleSubmit = async (e) => {
           </tr>
         </thead>
         <tbody id="user-table-body">
-          {!loading && user.length > 0 && user.map((item, index) => (
-            <tr key={index}>
-              <td>{item.id}</td>
-              <td>{item.name}</td>
-              <td>{item.l_name}</td>
-              <td>{item.domain_login}</td>
-              <td>{item.company}</td>
-              <td>
-                <input 
-                  type="radio" 
-                  name="selectedUser" 
-                  onChange={() => handleUserSelection(item.id)} 
-                  checked={selectedUserId === item.id} 
-                />
-              </td>
-            </tr>
-          ))}
+          {!loading &&
+            user.length > 0 &&
+            user.map((item, index) => (
+              <tr key={index}>
+                <td>{item.id}</td>
+                <td>{item.name}</td>
+                <td>{item.l_name}</td>
+                <td>{item.domain_login}</td>
+                <td>{item.company}</td>
+                <td>
+                  <input
+                    type="radio"
+                    name="selectedUser"
+                    onChange={() => handleUserSelection(item.id)}
+                    checked={selectedUserId === item.id}
+                  />
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
 
@@ -215,23 +220,25 @@ const handleSubmit = async (e) => {
           </tr>
         </thead>
         <tbody id="laptop-table-body">
-          {!laptopLoading && laptops.length > 0 && laptops.map((item, index) => (
-            <tr key={index}>
-              <td>{item.id}</td>
-              <td>{item.serialNumber}</td>
-              <td>{item.model}</td>
-              <td>{item.comment}</td>
-              <td>{item.company}</td>
-              <td>
-                <input 
-                  type="radio" 
-                  name="selectedLaptop" 
-                  onChange={() => handleLaptopSelection(item.id)} 
-                  checked={selectedLaptopId === item.id} 
-                />
-              </td>
-            </tr>
-          ))}
+          {!laptopLoading &&
+            laptops.length > 0 &&
+            laptops.map((item, index) => (
+              <tr key={index}>
+                <td>{item.id}</td>
+                <td>{item.serialNumber}</td>
+                <td>{item.model}</td>
+                <td>{item.comment}</td>
+                <td>{item.company}</td>
+                <td>
+                  <input
+                    type="radio"
+                    name="selectedLaptop"
+                    onChange={() => handleLaptopSelection(item.id)}
+                    checked={selectedLaptopId === item.id}
+                  />
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
 
@@ -278,7 +285,11 @@ const handleSubmit = async (e) => {
       </div>
 
       <div className="d-flex justify-content-between align-items-center">
-        <button id="generate" className="btn btn-primary" onClick={handleSubmit}>
+        <button
+          id="generate"
+          className="btn btn-primary"
+          onClick={handleSubmit}
+        >
           Generuj
         </button>
       </div>

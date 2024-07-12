@@ -4,6 +4,7 @@ __pycache__
 .env
 env
 myenv
+.venv
 DejaVuSans.ttf
 .vs
 .idea
